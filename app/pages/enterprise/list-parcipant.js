@@ -79,12 +79,25 @@ export default function ListParticipantEnterprise() {
       );
       if (response.status === 200) {
         Alert.alert("Successfully Complete this course");
+        navigation.push("enterprise-learning");
         setShowModal("");
       }
     } catch (error) {
       Alert.alert("Failed Complete this course");
       console.log(error);
     }
+  };
+
+  const showAlertCompleteCourse = () => {
+    Alert.alert("Are you sure to completed this course?", "", [
+      {
+        text: "Cancel",
+      },
+      {
+        text: "Yes, Sure",
+        onPress: () => handleCompleteCourse(),
+      },
+    ]);
   };
 
   const handleCreateScore = async () => {
@@ -127,7 +140,7 @@ export default function ListParticipantEnterprise() {
               List Paticipants ({data?.pl?.length})
             </Text>
             <TouchableOpacity
-              onPress={handleCompleteCourse}
+              onPress={showAlertCompleteCourse}
               style={[styles.cardButton, { background: COLORS.orange }]}
             >
               <Text style={styles.cardButtonText}>Complete Course</Text>

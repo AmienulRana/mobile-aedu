@@ -1,10 +1,10 @@
 {
   "expo": {
-    "name": "mobile-course",
-    "slug": "mobile-course",
+    "name": "Aedu Learning",
+    "slug": "aedu-learning",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/splash.png",
     "userInterfaceStyle": "light",
     "splash": {
       "image": "./assets/splash.png",
@@ -17,14 +17,44 @@
     "ios": {
       "supportsTablet": true
     },
+    "plugins": [
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "The app accesses your photos to let you share them with your friends."
+        }
+      ],
+      [
+        "expo-av",
+        {
+          "microphonePermission": "Allow $(PRODUCT_NAME) to access your microphone."
+        }
+      ]
+    ],
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./assets/splash.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "permissions": [
+        "android.permission.RECORD_AUDIO",
+        "android.permission.MODIFY_AUDIO_SETTINGS"
+      ],
+      "package": "com.amienulrana.aedulearning"
     },
     "web": {
-      "favicon": "./assets/favicon.png"
+      "favicon": "./assets/splash.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "dec172b2-7e8a-4e53-8afa-968b2d5c6d78"
+      }
+    },
+    "updates": {
+      "url": "https://u.expo.dev/dec172b2-7e8a-4e53-8afa-968b2d5c6d78"
+    },
+    "runtimeVersion": {
+      "policy": "sdkVersion"
     }
   }
 }

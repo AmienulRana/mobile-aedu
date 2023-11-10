@@ -73,27 +73,36 @@ const PublishCourse = ({ publishes }) => {
                     Impression : {publish?.tmp_Recentviewedcourses?.length}
                   </Text>
                 </View>
-                <TouchableOpacity
-                  onPress={() => {
-                    navigation.navigate(
-                      publish?.course_type === "Book"
-                        ? "enterprise-purchased-material"
-                        : "enterprise-purchased",
-                      { learning_id: publish?.id }
-                    );
-                  }}
-                  style={{
-                    fontWeight: "bold",
-                    textDecorationLine: "underline",
-                  }}
-                >
-                  <Text
-                    style={{ fontSize: 12, textDecorationLine: "underline" }}
+                {publish?.learning_method === "Online" ? (
+                  <TouchableOpacity>
+                    <Text style={{ fontSize: 12 }}>
+                      {" "}
+                      Purchased : {publish?.ms_Payments?.length}
+                    </Text>
+                  </TouchableOpacity>
+                ) : (
+                  <TouchableOpacity
+                    onPress={() => {
+                      navigation.navigate(
+                        publish?.course_type === "Book"
+                          ? "enterprise-purchased-material"
+                          : "enterprise-purchased",
+                        { learning_id: publish?.id }
+                      );
+                    }}
+                    style={{
+                      fontWeight: "bold",
+                      textDecorationLine: "underline",
+                    }}
                   >
-                    {" "}
-                    Purchased : {publish?.ms_Payments?.length}
-                  </Text>
-                </TouchableOpacity>
+                    <Text
+                      style={{ fontSize: 12, textDecorationLine: "underline" }}
+                    >
+                      {" "}
+                      Purchased : {publish?.ms_Payments?.length}
+                    </Text>
+                  </TouchableOpacity>
+                )}
               </View>
               <Text
                 style={{ fontSize: 12, marginBottom: 1, fontWeight: "bold" }}
@@ -108,17 +117,14 @@ const PublishCourse = ({ publishes }) => {
               {publish?.course_type === "Premium" && (
                 <>
                   <Text style={{ fontSize: 12, fontWeight: "bold" }}>
-                    Status: {publish?.course_open || "Close"}
+                    Status: {publish?.status || "Close"}
                   </Text>
                   {publish?.learning_method === "Offline" && (
                     <TouchableOpacity
                       onPress={() => {
-                        // Handle navigation to see participants
-                      }}
-                      style={{
-                        fontSize: 12,
-                        color: "gray",
-                        textDecorationLine: "underline",
+                        navigation.navigate("enterprise-purchased", {
+                          learning_id: publish?.id,
+                        });
                       }}
                     >
                       <Text>
@@ -130,7 +136,10 @@ const PublishCourse = ({ publishes }) => {
               )}
               {publish?.course_type === "Subscription" && (
                 <Text style={{ fontSize: 12, fontWeight: "bold" }}>
-                  Status: Open
+                  Status:{" "}
+                  {publish?.learning_method === "Online"
+                    ? "Open"
+                    : publish?.status}
                 </Text>
               )}
               <View

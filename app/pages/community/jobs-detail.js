@@ -21,6 +21,7 @@ import { Ionicons } from "@expo/vector-icons";
 import RenderHTML from "react-native-render-html";
 import axios from "axios";
 import { useProfileContext } from "../../context/useProfileContext";
+import { useLanguageContext } from "../../context/LanguageContext";
 
 export default function CommunityJobsDetail() {
   const { data: jobs } = useFetch("/comm/allJobs", URL_API_COMM);
@@ -29,6 +30,7 @@ export default function CommunityJobsDetail() {
   const [isVisible, setIsVisible] = useState(false);
   const navigation = useNavigation();
   const { profileContext } = useProfileContext();
+  const { language } = useLanguageContext();
 
   const router = useRoute();
 
@@ -70,13 +72,15 @@ export default function CommunityJobsDetail() {
           onPress={() => navigation.goBack()}
         >
           <Ionicons name="arrow-back-sharp" size={24} color="black" />
-          <Text style={{ fontSize: 20, fontWeight: "bold" }}>Back</Text>
+          <Text style={{ fontSize: 20, fontWeight: "bold" }}>
+            {language === "EN" ? "Back" : "Kembali"}
+          </Text>
         </TouchableOpacity>
         <View style={{ marginTop: 30 }}>
           <Text style={styles.jobName}>{detailJobs?.job_name}</Text>
           <Text style={styles.companyInfo}>
             {detailJobs?.ms_User?.ms_EnterpriseProfile?.business_name} |{" "}
-            {detailJobs?.employer} Applicant
+            {detailJobs?.employer} {language === "EN" ? "Applicant" : "Pelamar"}
           </Text>
 
           <View style={styles.detailsContainer}>
@@ -86,7 +90,9 @@ export default function CommunityJobsDetail() {
             </View>
             <View style={styles.detailItem}>
               {/* <RiHotelLine style={styles.icon} /> */}
-              <Text style={styles.detailText}>1 - 10 Employement</Text>
+              <Text style={styles.detailText}>
+                1 - 10 {language === "EN" ? "Employee" : "Karyawan"}
+              </Text>
             </View>
             <View style={styles.detailItem}>
               {/* <IoLocationOutline style={styles.icon} /> */}
@@ -102,18 +108,21 @@ export default function CommunityJobsDetail() {
                 onPress={() => setIsVisible(true)}
                 style={styles.applyButton}
               >
-                <Text style={styles.applyButtonText}>Apply Job</Text>
+                <Text style={styles.applyButtonText}>
+                  {language === "EN" ? "Apply Job" : "Lamar Pekerjaan"}
+                </Text>
               </TouchableOpacity>
-              <TouchableOpacity
-                //   onPress={handleSaveJobs}
-                style={styles.saveButton}
-              >
-                <Text style={styles.saveButtonText}>Save Job</Text>
+              <TouchableOpacity style={styles.saveButton}>
+                <Text style={styles.saveButtonText}>
+                  {language === "EN" ? "Save Job" : "Simpan"}
+                </Text>
               </TouchableOpacity>
             </View>
           )}
 
-          <Text style={styles.skillTitle}>Skills:</Text>
+          <Text style={styles.skillTitle}>
+            {language === "EN" ? "Skills:" : "Keahlian:"}
+          </Text>
           <View style={styles.skillsContainer}>
             {detailJobs?.skills?.split(",").map((skill, i) => (
               <View key={i} style={styles.skill}>
@@ -122,7 +131,10 @@ export default function CommunityJobsDetail() {
             ))}
           </View>
 
-          <Text style={styles.jobDescriptionTitle}>About the job:</Text>
+          <Text style={styles.jobDescriptionTitle}>
+            {language === "EN" ? "About the job:" : "Tentang pekerjaan:"}
+          </Text>
+
           <RenderHTML
             style={styles.jobDescription}
             contentWidth={width}
@@ -131,20 +143,29 @@ export default function CommunityJobsDetail() {
 
           <View style={styles.extraDetailsContainer}>
             <View style={styles.extraDetail}>
-              <Text style={styles.extraDetailTitle}>Qualification:</Text>
+              <Text style={styles.extraDetailTitle}>
+                {language === "EN" ? "Qualification:" : "Kualifikasi:"}
+              </Text>
               <Text style={styles.extraDetailText}>{detailJobs?.degree}</Text>
             </View>
             <View style={styles.extraDetail}>
-              <Text style={styles.extraDetailTitle}>Experience:</Text>
+              <Text style={styles.extraDetailTitle}>
+                {language === "EN" ? "Experience:" : "Pengalaman:"}
+              </Text>
               <Text style={styles.extraDetailText}>{detailJobs?.exp}</Text>
             </View>
             <View style={styles.extraDetail}>
-              <Text style={styles.extraDetailTitle}>Language:</Text>
+              <Text style={styles.extraDetailTitle}>
+                {language === "EN" ? "Language:" : "Bahasa:"}
+              </Text>
               <Text style={styles.extraDetailText}>{detailJobs?.language}</Text>
             </View>
           </View>
 
-          <Text style={styles.companyInfoTitle}>About the Company:</Text>
+          <Text style={styles.companyInfoTitle}>
+            {language === "EN" ? "About the Company:" : "Tentang Perusahaan:"}
+          </Text>
+
           <Text style={styles.companyInfoText}>
             marketing, PR, business development, fundraising, initial coin
             offering (ICO), tokenomics, startups, blockchain, advertising,
@@ -179,7 +200,7 @@ export default function CommunityJobsDetail() {
             <View
               style={{
                 width: "80%",
-                height: 200,
+                maxHeight: 350,
                 backgroundColor: "white",
                 borderRadius: 10,
                 padding: 20,
@@ -193,12 +214,16 @@ export default function CommunityJobsDetail() {
                   textAlign: "center",
                 }}
               >
-                We will send your digital portfolio to{" "}
+                {language === "EN"
+                  ? "We will send your digital portfolio to "
+                  : "Kami akan mengirimkan portofolio digital Anda kepada "}
                 <Text style={{ color: COLORS.main }}>
                   {detailJobs?.ms_User?.ms_EnterpriseProfile?.business_name}
                 </Text>
               </Text>
-              <Text style={{ textAlign: "center" }}>Are you sure?</Text>
+              <Text style={{ textAlign: "center" }}>
+                {language === "EN" ? "Are you sure?" : "Apakah Anda yakin?"}
+              </Text>
               <View
                 style={{
                   flexDirection: "row",
@@ -219,7 +244,7 @@ export default function CommunityJobsDetail() {
                   onPress={() => setIsVisible(false)}
                 >
                   <Text style={{ color: COLORS.main, textAlign: "center" }}>
-                    Cancel
+                    {language === "EN" ? "Cancel" : "Batal"}
                   </Text>
                 </TouchableOpacity>
                 <TouchableOpacity
@@ -232,7 +257,7 @@ export default function CommunityJobsDetail() {
                   onPress={handleApplyJob}
                 >
                   <Text style={{ color: "#FFF", textAlign: "center" }}>
-                    Yes, Sure
+                    {language === "EN" ? "Yes, Sure" : "Ya, Tentu"}
                   </Text>
                 </TouchableOpacity>
               </View>

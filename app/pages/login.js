@@ -6,6 +6,7 @@ import {
   StyleSheet,
   TouchableOpacity,
   Alert,
+  ScrollView,
 } from "react-native";
 import React, { useState } from "react";
 import COLORS from "../components/shared/COLORS";
@@ -15,10 +16,15 @@ import { FontAwesome, FontAwesome5, Ionicons } from "@expo/vector-icons";
 import axios from "axios";
 import { URL_API, URL_API_ENTER } from "../hooks/useFetch";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useProfileContext } from "../context/useProfileContext";
+import { useLanguageContext } from "../context/LanguageContext";
 
 export default function Login() {
   const navigation = useNavigation();
   const router = useRoute();
+  const { profileContext, setProfileContext } = useProfileContext();
+
+  const { language } = useLanguageContext();
 
   const [username, onChangeUsername] = useState("");
   const [password, onChangePassword] = useState("");
@@ -46,21 +52,35 @@ export default function Login() {
       });
       if (response.status === 200) {
         await AsyncStorage.setItem("login-mode", "enterprise");
-        navigation.push("enterprise-home");
+        setProfileContext({ ...profileContext, enterpise: "enterprise" });
+        setTimeout(() => {
+          navigation.push("enterprise-home");
+        }, 300);
       }
     } catch (error) {
-      console.log("error", error);
-      Alert.alert(
-        "Failed Login as Enterprise",
-        "Your username or password maybe wrong"
-      );
+      console.log("error", error?.response);
+      if (error?.response?.data === "You're already logged in") {
+        await AsyncStorage.setItem("login-mode", "enterprise");
+        setProfileContext({ ...profileContext, enterpise: "enterprise" });
+        setTimeout(() => {
+          navigation.push("enterprise-home");
+        }, 300);
+      } else {
+        Alert.alert(
+          "Failed Login as Enterprise",
+          "Your username or password maybe wrong"
+        );
+      }
     }
   };
   return (
-    <View>
+    <ScrollView>
       <Image source={require("../assets/login-image.png")} />
       <View style={styles.container}>
-        <Text style={styles.heading}>Welcome to AEDU</Text>
+        <Text style={styles.heading}>
+          {language === "EN" ? "Welcome to AEDU" : "Selamat Datang di AEDU"}
+        </Text>
+
         <View style={styles.wrapperInput}>
           <FontAwesome5
             name="user-alt"
@@ -70,7 +90,7 @@ export default function Login() {
           />
           <TextInput
             style={styles.input}
-            placeholder="Username"
+            placeholder={language === "EN" ? "Username" : "Nama Pengguna"}
             value={username}
             onChangeText={onChangeUsername}
             keyboardType="email-address"
@@ -85,7 +105,7 @@ export default function Login() {
             style={{ marginRight: 15 }}
           />
           <TextInput
-            placeholder="Password"
+            placeholder={language === "EN" ? "Password" : "Kata Sandi"}
             secureTextEntry
             style={styles.input}
             value={password}
@@ -93,20 +113,28 @@ export default function Login() {
           />
         </View>
         <TouchableOpacity onPress={() => handleLogin()}>
-          <Text style={styles.buttonLogin}>Sign In</Text>
+          <Text style={styles.buttonLogin}>
+            {language === "EN" ? "Sign In" : "Masuk"}
+          </Text>
         </TouchableOpacity>
+
         <TouchableOpacity onPress={() => handleLoginEnterprise()}>
-          <Text style={styles.buttonLoginEnter}>Sign In as Enterprise</Text>
+          <Text style={styles.buttonLoginEnter}>
+            {language === "EN"
+              ? "Sign In as Enterprise"
+              : "Masuk sebagai Perusahaan"}
+          </Text>
         </TouchableOpacity>
+
         <TouchableOpacity onPress={() => navigation.navigate("home")}>
           <Text
             style={{ textAlign: "center", color: COLORS.gray, marginTop: 15 }}
           >
-            Skip Authentication
+            {language === "EN" ? "Skip Authentication" : "Lewati Otentikasi"}
           </Text>
         </TouchableOpacity>
       </View>
-    </View>
+    </ScrollView>
   );
 }
 

@@ -13,10 +13,17 @@ import COLORS from "../shared/COLORS";
 import { useNavigation } from "@react-navigation/native";
 
 export default function PageHeaderCommunity() {
-  const { data: userProfile } = useFetch(`/enter/getVerif`, URL_API_ENTER);
+  const { data: userProfile, isError } = useFetch(
+    `/enter/getVerif`,
+    URL_API_ENTER
+  );
   // const { data: cookie } = useFetch("/comm/cc", URL_API_COMMUNITY);
 
   const navigation = useNavigation();
+
+  useEffect(() => {
+    console.log(isError);
+  }, [isError]);
 
   return (
     <SafeAreaView>

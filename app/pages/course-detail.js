@@ -29,6 +29,7 @@ import axios from "axios";
 import Collapsible from "react-native-collapsible";
 import YoutubePlayer from "react-native-youtube-iframe";
 import FinishCourse from "../components/pages/detail-course/finish-course";
+import { useLanguageContext } from "../context/LanguageContext";
 
 const courses = [
   "Introduction",
@@ -51,6 +52,7 @@ export default function CourseDetail() {
   const { data: coursesProgress } = useFetch(
     `/progression/${router.params?.id}`
   );
+  const { language } = useLanguageContext();
 
   const [isMyCourse, setIsMyCourse] = useState(false);
   const [expandModule, setExpandModule] = useState(false);
@@ -149,74 +151,7 @@ export default function CourseDetail() {
       ) : (
         !loadingDetail &&
         !loadingOwned &&
-        (!isMyCourse ? (
-          <ScrollView
-            style={{ marginBottom: 50 }}
-            showsVerticalScrollIndicator={false}
-          >
-            <DescriptionCourse data={data} />
-            <View>
-              <Text style={{ marginTop: 20, fontSize: 16, fontWeight: "bold" }}>
-                Assignment
-              </Text>
-              <Text style={{ marginTop: 20, fontSize: 16, fontWeight: "bold" }}>
-                Pre-requisites
-              </Text>
-              <Text style={{ marginTop: 20, fontSize: 16, fontWeight: "bold" }}>
-                Detail Course
-              </Text>
-              <View style={styles.detailCourseWrapper}>
-                <BadgeCourse courseType={data?.course?.course_type} />
-                {data?.course?.course_type === "Book" ? (
-                  <DetailMaterial data={data} />
-                ) : (
-                  <InformationDetail data={data} />
-                )}
-                <CourseInformation
-                  Icon={
-                    <MaterialCommunityIcons
-                      name="star"
-                      size={20}
-                      color={
-                        data?.course?.zms_CRatings?.length > 0
-                          ? COLORS.orange
-                          : "black"
-                      }
-                    />
-                  }
-                  value={`${Math.round(
-                    averageRating(data?.course?.zms_CRatings) || 0
-                  )} (${data?.course?.zms_CRatings?.length || 0})`}
-                />
-
-                <TouchableOpacity
-                  onPress={() => handleCheckoutPage()}
-                  style={styles.btnCheckout}
-                >
-                  <Text style={{ color: "white" }}>Buy Now</Text>
-                  <MaterialCommunityIcons
-                    name="cart-outline"
-                    size={20}
-                    color="white"
-                  />
-                </TouchableOpacity>
-                <View
-                  style={{
-                    flexDirection: "row",
-                    justifyContent: "space-between",
-                    marginTop: 15,
-                    alignItems: "center",
-                  }}
-                >
-                  <Text>Total Price</Text>
-                  <Text style={styles.price}>
-                    Rp{Number(data?.course?.price || 0).toLocaleString()}
-                  </Text>
-                </View>
-              </View>
-            </View>
-          </ScrollView>
-        ) : (
+        (isMyCourse && data?.course?.learning_method === "Online" ? (
           <ScrollView
             showsVerticalScrollIndicator={false}
             // style={{ paddingBottom: 50 }}
@@ -236,7 +171,11 @@ export default function CourseDetail() {
               )}
               {subModuleActive?.content_type === "video" && (
                 <>
-                  <YoutubePlayer height={200} play videoId={"Nt-NPpyR9sI"} />
+                  <YoutubePlayer
+                    height={200}
+                    play
+                    videoId={subModuleActive?.status?.split(".be/")?.[1]}
+                  />
                   <Text style={{ marginTop: 10 }}>
                     {subModuleActive?.video_desc}
                   </Text>
@@ -247,7 +186,7 @@ export default function CourseDetail() {
               <Text
                 style={{ fontWeight: "bold", fontSize: 16, marginBottom: 0 }}
               >
-                Course Content
+                {language === "EN" ? "Course Content" : "Konten Kursus"}
               </Text>
               <View style={{ marginBottom: 10 }}>
                 <Text style={{ textAlign: "right", marginBottom: 5 }}>
@@ -313,9 +252,7 @@ export default function CourseDetail() {
                           {item?.ms_CourseSubModules?.length}
                         </Text>
                       </TouchableOpacity>
-                      <Collapsible
-                        collapsed={isCollapsed === item?.id ? false : true}
-                      >
+                      <Collapsible collapsed={isCollapsed === item?.id}>
                         <View style={{ paddingHorizontal: 20, marginTop: 15 }}>
                           {item?.ms_CourseSubModules?.map(
                             (subModule, index) => (
@@ -346,7 +283,7 @@ export default function CourseDetail() {
                 onPress={() => setExpandModule((prev) => !prev)}
               >
                 <Text style={{ textAlign: "center", color: COLORS.main }}>
-                  Expand List
+                  {language === "EN" ? "Expand List" : "Perluas Daftar"}
                 </Text>
                 <MaterialCommunityIcons
                   name="folder-multiple-outline"
@@ -385,7 +322,7 @@ export default function CourseDetail() {
                       fontWeight: "bold",
                     }}
                   >
-                    Back
+                    {language === "EN" ? "Back" : "Kembali"}
                   </Text>
                 </TouchableOpacity>
               )}
@@ -421,10 +358,86 @@ export default function CourseDetail() {
                       fontWeight: "bold",
                     }}
                   >
-                    Finish
+                    {language === "EN" ? "Finish" : "Selesai"}
                   </Text>
                 </TouchableOpacity>
               )}
+            </View>
+          </ScrollView>
+        ) : (
+          <ScrollView
+            style={{ marginBottom: 50 }}
+            showsVerticalScrollIndicator={false}
+          >
+            <DescriptionCourse data={data} />
+            <View>
+              <Text style={{ marginTop: 20, fontSize: 16, fontWeight: "bold" }}>
+                {language === "EN" ? "Assignment" : "Apa yang di pelajari?"}
+              </Text>
+              {data?.course?.course_type !== "Book" && (
+                <Text
+                  style={{ marginTop: 20, fontSize: 16, fontWeight: "bold" }}
+                >
+                  {language === "EN" ? "Pre-requisites" : "Prasyarat"}
+                </Text>
+              )}
+              <Text style={{ marginTop: 20, fontSize: 16, fontWeight: "bold" }}>
+                {language === "EN" ? "Detail Course" : "Detail Kursus"}
+              </Text>
+              <View style={styles.detailCourseWrapper}>
+                <BadgeCourse courseType={data?.course?.course_type} />
+                {data?.course?.course_type === "Book" ? (
+                  <DetailMaterial data={data} />
+                ) : (
+                  <InformationDetail data={data} />
+                )}
+                <CourseInformation
+                  Icon={
+                    <MaterialCommunityIcons
+                      name="star"
+                      size={20}
+                      color={
+                        data?.course?.zms_CRatings?.length > 0
+                          ? COLORS.orange
+                          : "black"
+                      }
+                    />
+                  }
+                  value={`${Math.round(
+                    averageRating(data?.course?.zms_CRatings) || 0
+                  )} (${data?.course?.zms_CRatings?.length || 0})`}
+                />
+
+                <TouchableOpacity
+                  onPress={() => handleCheckoutPage()}
+                  style={styles.btnCheckout}
+                >
+                  <Text style={{ color: "white" }}>
+                    {language === "EN" ? "Buy Now" : "Beli Sekarang"}
+                  </Text>
+                  <MaterialCommunityIcons
+                    name="cart-outline"
+                    size={20}
+                    color="white"
+                  />
+                </TouchableOpacity>
+                <View
+                  style={{
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                    marginTop: 15,
+                    alignItems: "center",
+                  }}
+                >
+                  <Text>
+                    {language === "EN" ? "Total Price" : "Total Harga"}
+                  </Text>
+
+                  <Text style={styles.price}>
+                    Rp{Number(data?.course?.price || 0).toLocaleString()}
+                  </Text>
+                </View>
+              </View>
             </View>
           </ScrollView>
         ))

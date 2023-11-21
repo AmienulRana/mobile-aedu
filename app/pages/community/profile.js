@@ -30,6 +30,7 @@ import moment from "moment/moment";
 import BottomMenuBarCommunity from "../../components/common/bottom-menu-community";
 import { useNavigation } from "@react-navigation/native";
 import axios from "axios";
+import { useLanguageContext } from "../../context/LanguageContext";
 
 export default function ProfileCommunity() {
   const navigation = useNavigation();
@@ -60,6 +61,7 @@ export default function ProfileCommunity() {
     URL_API_COMM
   );
   const { data: profileViews } = useFetch("/comm/profile_view", URL_API_COMM);
+  const { language } = useLanguageContext();
 
   const [totalUnreadMessage, setTotalUnreadMessage] = useState(0);
   const [totalUnreadNotif, setTotalUnreadNotif] = useState(0);
@@ -221,8 +223,11 @@ export default function ProfileCommunity() {
               style={{ flexDirection: "row", gap: 6, marginTop: 5 }}
             >
               <Text style={{ color: COLORS.gray }}>
-                Who's viewed your profile
+                {language === "EN"
+                  ? "Who's viewed your profile"
+                  : "Siapa yang melihat profil Anda"}
               </Text>
+
               <Text
                 style={{ color: COLORS.main, textDecorationLine: "underline" }}
               >
@@ -241,7 +246,7 @@ export default function ProfileCommunity() {
             }}
           >
             <Text style={{ fontSize: 20, fontWeight: "bold" }}>
-              My Community
+              {language === "EN" ? "My Community" : "Komunitas Saya"}
             </Text>
           </View>
           {communitys?.slice(0, 2)?.map((community) => (
@@ -256,8 +261,11 @@ export default function ProfileCommunity() {
                 />
                 <View>
                   <Text style={{ fontSize: 10, color: COLORS.gray }}>
-                    PUBLIC COMMUNITY
+                    {language === "EN"
+                      ? "PUBLIC COMMUNITY"
+                      : "KOMUNITAS PUBLIK"}
                   </Text>
+
                   <TouchableOpacity
                     onPress={() =>
                       navigation.navigate("community-detail", {
@@ -272,7 +280,8 @@ export default function ProfileCommunity() {
                   <Text
                     style={{ fontSize: 12, color: COLORS.gray, marginTop: 5 }}
                   >
-                    {community?.ms_CommGrpMembers?.length} Members
+                    {community?.ms_CommGrpMembers?.length}{" "}
+                    {language === "EN" ? "Members" : "Anggota"}
                   </Text>
                 </View>
               </View>
@@ -285,9 +294,13 @@ export default function ProfileCommunity() {
             <Text
               style={{ marginTop: 10, textAlign: "center", color: COLORS.main }}
             >
-              {communitys?.length < 0
-                ? "Explore Community"
-                : `See ${communitys?.length - 2} Community`}
+              {language === "EN"
+                ? communitys?.length < 0
+                  ? "Explore Community"
+                  : `See ${communitys?.length - 2} Community`
+                : communitys?.length < 0
+                ? "Jelajahi Komunitas"
+                : `Lihat ${communitys?.length - 2} Komunitas`}
             </Text>
           </TouchableOpacity>
         </View>
@@ -299,7 +312,9 @@ export default function ProfileCommunity() {
               alignItems: "center",
             }}
           >
-            <Text style={{ fontSize: 20, fontWeight: "bold" }}>About Me</Text>
+            <Text style={{ fontSize: 20, fontWeight: "bold" }}>
+              {language === "EN" ? "About Me" : "Tentang Saya"}
+            </Text>
           </View>
           <View style={{ marginTop: 15, flexDirection: "row", gap: 7 }}>
             <Text style={{ fontSize: 16 }}>{userProfile?.profile?.about}</Text>
@@ -316,29 +331,38 @@ export default function ProfileCommunity() {
             <Text
               style={{ fontSize: 20, fontWeight: "bold", marginBottom: 15 }}
             >
-              Personal Information
+              {language === "EN" ? "Personal Information" : "Informasi Pribadi"}
             </Text>
           </View>
           <View style={{ flexDirection: "row", gap: 7, marginBottom: 5 }}>
-            <Text style={{ fontSize: 16 }}>{"\u2022"} Marital status :</Text>
+            <Text style={{ fontSize: 16 }}>
+              {"\u2022"}{" "}
+              {language === "EN" ? "Marital status" : "Status Pernikahan"}:
+            </Text>
             <Text style={{ fontSize: 16, fontWeight: "bold" }}>
               {userProfile?.profile?.marital_stats}
             </Text>
           </View>
           <View style={{ flexDirection: "row", gap: 7, marginBottom: 5 }}>
-            <Text style={{ fontSize: 16 }}>{"\u2022"} Gender :</Text>
+            <Text style={{ fontSize: 16 }}>
+              {"\u2022"} {language === "EN" ? "Gender" : "Jenis Kelamin"}:
+            </Text>
             <Text style={{ fontSize: 16, fontWeight: "bold" }}>
               {userProfile?.profile?.gender}
             </Text>
           </View>
           <View style={{ flexDirection: "row", gap: 7, marginBottom: 5 }}>
-            <Text style={{ fontSize: 16 }}>{"\u2022"} Religion :</Text>
+            <Text style={{ fontSize: 16 }}>
+              {"\u2022"} {language === "EN" ? "Religion" : "Agama"}:
+            </Text>
             <Text style={{ fontSize: 16, fontWeight: "bold" }}>
               {userProfile?.profile?.religion}
             </Text>
           </View>
           <View style={{ flexDirection: "row", gap: 7, marginBottom: 5 }}>
-            <Text style={{ fontSize: 16 }}>{"\u2022"} Age :</Text>
+            <Text style={{ fontSize: 16 }}>
+              {"\u2022"} {language === "EN" ? "Age" : "Usia"}:
+            </Text>
             <Text style={{ fontSize: 16, fontWeight: "bold" }}>
               {moment().diff(
                 moment(userProfile?.profile?.dateofbirth),
@@ -358,7 +382,7 @@ export default function ProfileCommunity() {
             <Text
               style={{ fontSize: 20, fontWeight: "bold", marginBottom: 15 }}
             >
-              Experience
+              {language === "EN" ? "Experience" : "Pengalaman"}
             </Text>
           </View>
           <Timeline data={experienceTimeline} />
@@ -374,7 +398,7 @@ export default function ProfileCommunity() {
             <Text
               style={{ fontSize: 20, fontWeight: "bold", marginBottom: 15 }}
             >
-              Certificate
+              {language === "EN" ? "Certificate" : "Sertifikat"}
             </Text>
           </View>
           {certificate?.map((certif) => (
@@ -416,7 +440,7 @@ export default function ProfileCommunity() {
             <Text
               style={{ fontSize: 20, fontWeight: "bold", marginBottom: 15 }}
             >
-              Education
+              {language === "EN" ? "Education" : "Pendidikan"}
             </Text>
           </View>
           <Timeline data={educationTimeline} />
@@ -433,7 +457,11 @@ export default function ProfileCommunity() {
               marginBottom: 30,
             }}
           >
-            <Text style={{ fontSize: 16 }}>Check digital portfolio</Text>
+            <Text style={{ fontSize: 16 }}>
+              {language === "EN"
+                ? "Download digital portfolio"
+                : "Unduh portofolio digital"}
+            </Text>
             <TouchableOpacity
               onPress={() =>
                 Linking.openURL(
@@ -441,7 +469,9 @@ export default function ProfileCommunity() {
                 )
               }
             >
-              <Text style={{ fontSize: 16, color: COLORS.main }}>in here!</Text>
+              <Text style={{ fontSize: 16, color: COLORS.main }}>
+                {language === "EN" ? "in here!" : "di sini!"}
+              </Text>
             </TouchableOpacity>
           </View>
         </View>

@@ -25,11 +25,13 @@ import COLORS from "../shared/COLORS";
 import axios from "axios";
 import { URL_API_ENTER } from "../../hooks/useFetch";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useProfileContext } from "../../context/useProfileContext";
 
 const BottomMenuEnterprise = () => {
   const [isKeyboardVisible, setKeyboardVisible] = useState(false);
   const navigation = useContext(NavigationContext);
   const router = useRoute();
+  const { profileContext, setProfileContext } = useProfileContext();
 
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(
@@ -53,11 +55,14 @@ const BottomMenuEnterprise = () => {
 
   const handleLogout = async () => {
     await AsyncStorage.removeItem("login-mode");
-    navigation.navigate("login");
+    // navigation.navigate("login");
     try {
       const response = await axios.get(`${URL_API_ENTER}/enter/logout`);
       if (response.status === 200) {
-        navigation.navigate("home");
+        setProfileContext({ ...profileContext, enterpise: "" });
+        setTimeout(() => {
+          navigation.navigate("home");
+        }, 500);
       }
     } catch (error) {
       console.log(error?.response);

@@ -16,10 +16,12 @@ import axios from "axios";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
 import PageHeaderCommunity from "../../components/common/page-header-community";
+import { useLanguageContext } from "../../context/LanguageContext";
 
 export default function CommunitySearch() {
   const router = useRoute();
   const navigation = useNavigation();
+  const { language } = useLanguageContext();
 
   const { data: results, fetchData } = useFetch(
     `/comm/search/${router.params?.content}`,
@@ -35,16 +37,22 @@ export default function CommunitySearch() {
       <ScrollView showsVerticalScrollIndicator={false} style={styles.container}>
         <PageHeaderCommunity />
         <View style={{ marginTop: 30 }}></View>
-        <Text style={{ fontSize: 16, fontWeight: 800 }}>Result Search</Text>
+        <Text style={{ fontSize: 16, fontWeight: 800 }}>
+          {language === "EN" ? "Result Search" : "Hasil Pencarian"}
+        </Text>
         <Text style={{ marginBottom: 15, marginTop: 5 }}>
           {results?.enterpriseUsers_count + results?.users_count} results for{" "}
-          <Text style={{ fontWeight: "bold" }}>{router.params?.content}</Text>
+          <Text style={{ fontWeight: "bold" }}>
+            {language === "EN"
+              ? router.params?.content
+              : "Hasil Pencarian Anda"}
+          </Text>
         </Text>
 
         <View style={{ backgroundColor: "white", marginTop: 8, padding: 5 }}>
           {results?.users?.length > 0 && (
             <Text style={{ fontSize: 16, fontWeight: "bold", marginBottom: 5 }}>
-              People
+              {language === "EN" ? "People" : "Orang"}
             </Text>
           )}
           {results?.users?.map((user, i) => (
@@ -110,7 +118,10 @@ export default function CommunitySearch() {
                         color: COLORS.gray,
                       }}
                     >
-                      2 same community (React.js Developer and Next.js Dev)
+                      {language === "EN"
+                        ? "2 same community"
+                        : "2 komunitas yang sama"}{" "}
+                      (React.js Developer and Next.js Dev)
                     </Text>
                   </View>
                 </View>

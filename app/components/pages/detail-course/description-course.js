@@ -8,9 +8,11 @@ import {
 import React from "react";
 import RenderHTML from "react-native-render-html";
 import COLORS from "../../shared/COLORS";
+import { useLanguageContext } from "../../../context/LanguageContext";
 
 export default function DescriptionCourse({ data }) {
   const { width } = useWindowDimensions();
+  const { language } = useLanguageContext();
 
   return (
     <View>
@@ -19,7 +21,8 @@ export default function DescriptionCourse({ data }) {
           {data?.course?.title}
         </Text>
         <Text style={{ color: COLORS.gray }}>
-          By {data?.course?.ms_User?.ms_EnterpriseProfile?.business_name}
+          {language === "EN" ? "By" : "Dibuat Oleh"}{" "}
+          {data?.course?.ms_User?.ms_EnterpriseProfile?.business_name}
         </Text>
         <Image
           source={{ uri: data?.course?.thumbnail }}
@@ -31,7 +34,7 @@ export default function DescriptionCourse({ data }) {
           }}
         />
         <Text style={{ marginTop: 20, fontSize: 16, fontWeight: "bold" }}>
-          About Course
+          {language === "EN" ? "About Learning" : "Tentang Pembelajaran"}
         </Text>
         <View style={{ color: COLORS.gray, marginTop: 10 }}>
           <RenderHTML

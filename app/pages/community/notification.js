@@ -14,6 +14,7 @@ import { useNavigation } from "@react-navigation/native";
 import { getTimeAgoString } from "../../components/utils/helper";
 import { Feather, Ionicons } from "@expo/vector-icons";
 import { Avatar } from "./home";
+import { useLanguageContext } from "../../context/LanguageContext";
 
 export default function CommunityNotification() {
   const navigation = useNavigation();
@@ -23,6 +24,7 @@ export default function CommunityNotification() {
     URL_API_COMM
   );
   const [notificationData, setNotificationData] = useState([]);
+  const { language } = useLanguageContext();
 
   const handleLoadMore = () => {
     // Mengganti halaman saat tombol "Load More" ditekan
@@ -60,7 +62,9 @@ export default function CommunityNotification() {
         onPress={() => navigation.goBack()}
       >
         <Ionicons name="arrow-back-sharp" size={24} color="black" />
-        <Text style={{ fontSize: 20, fontWeight: "bold" }}>Back</Text>
+        <Text style={{ fontSize: 20, fontWeight: "bold" }}>
+          {language === "EN" ? "Back" : "Kembali"}
+        </Text>
       </TouchableOpacity>
       <View style={{ marginTop: 30, backgroundColor: COLORS.main }}></View>
       {!isLoading &&
@@ -98,6 +102,7 @@ export default function CommunityNotification() {
                       <Avatar
                         name={notification?.ms_User?.ms_Profile?.first_name}
                         size={50}
+                        imageUrl={notification?.ms_User?.ms_Profile?.virtual_pp}
                       />
                       <View
                         style={{
@@ -115,7 +120,9 @@ export default function CommunityNotification() {
                               notification?.ms_User?.ms_Profile?.last_name || ""
                             }`}{" "}
                           </Text>
-                          recently liked your post
+                          {language === "EN"
+                            ? "recently liked your post"
+                            : "baru saja menyukai kiriman Anda"}
                         </Text>
                         <Text
                           style={{
@@ -125,11 +132,12 @@ export default function CommunityNotification() {
                             minWidth: "auto",
                           }}
                         >
-                          {getTimeAgoString(notification?.createdAt)}
+                          {getTimeAgoString(notification?.createdAt, language)}
                         </Text>
                       </View>
                     </>
                   )}
+
                 {notification?.post_id &&
                   notification?.act?.includes("Comment") && (
                     <>
@@ -139,6 +147,7 @@ export default function CommunityNotification() {
                           "Jhon"
                         }
                         size={50}
+                        imageUrl={notification?.ms_User?.ms_Profile?.virtual_pp}
                       />
                       <View
                         style={{
@@ -156,7 +165,9 @@ export default function CommunityNotification() {
                               notification?.ms_User?.ms_Profile?.last_name || ""
                             }`}{" "}
                           </Text>
-                          comment in your post
+                          {language === "EN"
+                            ? "comment in your post"
+                            : "baru saja mengomentari kiriman Anda"}
                         </Text>
                         <Text
                           style={{
@@ -166,18 +177,19 @@ export default function CommunityNotification() {
                             minWidth: "auto",
                           }}
                         >
-                          {getTimeAgoString(notification?.createdAt)}
+                          {getTimeAgoString(notification?.createdAt, language)}
                         </Text>
                       </View>
                     </>
                   )}
+
                 {notification?.act?.includes("New") && (
                   <>
                     <Avatar
                       name={notification?.ms_User?.ms_Profile?.first_name}
                       size={50}
+                      imageUrl={notification?.ms_User?.ms_Profile?.virtual_pp}
                     />
-
                     <View
                       style={{
                         flex: 1,
@@ -185,7 +197,7 @@ export default function CommunityNotification() {
                         flexDirection: "row",
                       }}
                     >
-                      <Text style={{ flex: 1 }} numberOfLines={2} el>
+                      <Text style={{ flex: 1 }} numberOfLines={2}>
                         <Text style={{ fontWeight: 900 }}>
                           {`${
                             notification?.ms_User?.ms_Profile?.first_name ||
@@ -194,10 +206,14 @@ export default function CommunityNotification() {
                             notification?.ms_User?.ms_Profile?.last_name || ""
                           }`}{" "}
                         </Text>
-                        {"just posted something"}
+                        {language === "EN"
+                          ? "just posted something"
+                          : "baru saja memposting sesuatu"}
                         <Text style={{ fontWeight: 900 }}>
                           {notification?.ms_CommGroup
-                            ? ` to ${notification?.ms_CommGroup?.group_name}`
+                            ? ` ${language === "EN" ? "to" : "ke"} ${
+                                notification?.ms_CommGroup?.group_name
+                              }`
                             : ""}
                         </Text>
                       </Text>
@@ -209,7 +225,7 @@ export default function CommunityNotification() {
                           minWidth: "auto",
                         }}
                       >
-                        {getTimeAgoString(notification?.createdAt)}
+                        {getTimeAgoString(notification?.createdAt, language)}
                       </Text>
                     </View>
                   </>
@@ -217,10 +233,14 @@ export default function CommunityNotification() {
               </TouchableOpacity>
             ))
         ) : (
-          <Text style={{ textAlign: "center" }}>You no have notification</Text>
+          <Text style={{ textAlign: "center" }}>
+            {language === "EN"
+              ? "You have no notification"
+              : "Anda tidak memiliki pemberitahuan"}
+          </Text>
         ))}
 
-      {page * 10 < notificationData && (
+      {page * 10 < notificationData.length && (
         <TouchableOpacity
           style={{
             backgroundColor: COLORS.main,
@@ -230,7 +250,9 @@ export default function CommunityNotification() {
           }}
           onPress={handleLoadMore}
         >
-          <Text style={{ textAlign: "center", color: "white" }}>Load More</Text>
+          <Text style={{ textAlign: "center", color: "white" }}>
+            {language === "EN" ? "Load More" : "Muat Lebih Banyak"}
+          </Text>
         </TouchableOpacity>
       )}
     </ScrollView>

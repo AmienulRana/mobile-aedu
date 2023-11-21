@@ -126,12 +126,12 @@ export default function LearningCreate() {
     }
   };
 
-  const handleGoalsChange = (event, index, goals) => {
-    const { value } = event.target;
+  const handleGoalsChange = (value, index, goals) => {
     if (goals === "assignment") {
       setAssignments((prevCourseContext) => {
         const updatedAssignments = [...prevCourseContext];
         updatedAssignments[index] = value;
+        console.log(updatedAssignments);
         return updatedAssignments;
       });
     } else {
@@ -651,17 +651,21 @@ export default function LearningCreate() {
                 onPress={() => setValue("learning_method", "Online")}
               />
               <Text>Online</Text>
-              <RadioButton
-                color={COLORS.main}
-                value="Offline"
-                status={
-                  watch("learning_method") === "Offline"
-                    ? "checked"
-                    : "unchecked"
-                }
-                onPress={() => setValue("learning_method", "Offline")}
-              />
-              <Text>Offline</Text>
+              {courseType !== "Subscription" && (
+                <>
+                  <RadioButton
+                    color={COLORS.main}
+                    value="Offline"
+                    status={
+                      watch("learning_method") === "Offline"
+                        ? "checked"
+                        : "unchecked"
+                    }
+                    onPress={() => setValue("learning_method", "Offline")}
+                  />
+                  <Text>Offline</Text>
+                </>
+              )}
             </View>
             {watch("learning_method") === "Offline" && (
               <>
@@ -827,26 +831,20 @@ export default function LearningCreate() {
             >
               <RadioButton
                 color={COLORS.main}
-                value="Online"
-                status={
-                  watch("learning_method") === "Online"
-                    ? "checked"
-                    : "unchecked"
-                }
-                onPress={() => setValue("learning_method", "Online")}
+                value={true}
+                status={watch("certificate") ? "checked" : "unchecked"}
+                onPress={() => setValue("certificate", true)}
               />
-              <Text>Online</Text>
+              <Text>Yes</Text>
               <RadioButton
                 color={COLORS.main}
-                value="Offline"
+                value={false}
                 status={
-                  watch("learning_method") === "Offline"
-                    ? "checked"
-                    : "unchecked"
+                  watch("certificate") === false ? "checked" : "unchecked"
                 }
-                onPress={() => setValue("learning_method", "Offline")}
+                onPress={() => setValue("certificate", false)}
               />
-              <Text>Offline</Text>
+              <Text>No</Text>
             </View>
             <Text>Does this course offer a certificate?</Text>
 
@@ -943,9 +941,9 @@ export default function LearningCreate() {
                     assignmentsPlaceholder[index] ||
                     `Example: Assignment ${index + 1}`
                   }
-                  value={assignment}
+                  value={assignments[index]}
                   onChangeText={(text) =>
-                    handleGoalsChange(text, index, "assignments")
+                    handleGoalsChange(text, index, "assignment")
                   }
                 />
               </View>

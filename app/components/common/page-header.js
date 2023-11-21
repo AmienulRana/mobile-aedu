@@ -11,6 +11,8 @@ import React, { useEffect, useState } from "react";
 import useFetch from "../../hooks/useFetch";
 import COLORS from "../shared/COLORS";
 import { useNavigation } from "@react-navigation/native";
+import LanguageToggle from "./language-toggle";
+import { useLanguageContext } from "../../context/LanguageContext";
 
 export default function PageHeader() {
   const { data: token } = useFetch("/getToken");
@@ -18,6 +20,7 @@ export default function PageHeader() {
     `/getProfile?token=${token?.token}`
   );
   const navigation = useNavigation();
+  const { language } = useLanguageContext();
 
   useEffect(() => {
     fetchUserProfile();
@@ -27,26 +30,23 @@ export default function PageHeader() {
     <SafeAreaView>
       <View style={styles.container}>
         <View>
-          <Text>Hello,</Text>
+          <Text>{language === "EN" ? "Hello" : "Halo"},</Text>
           <Text style={styles.username}>
             {userProfile?.profile?.first_name || "There"}{" "}
             {userProfile?.profile?.last_name}
           </Text>
         </View>
-        {userProfile?.profile?.first_name ? (
-          <View style={styles.avatar}>
-            <Text style={{ color: "white", fontWeight: "bold" }}>
-              {userProfile?.profile?.first_name?.substring(0, 1)}
-            </Text>
-          </View>
-        ) : (
-          <TouchableOpacity onPress={() => navigation.navigate("login")}>
-            <Image
-              source={require("../../assets/profile.png")}
-              style={{ width: 40, height: 40 }}
-            />
-          </TouchableOpacity>
-        )}
+        <View style={{ flexDirection: "row", gap: 10, alignItems: "center" }}>
+          <LanguageToggle />
+          {!userProfile?.profile?.first_name && (
+            <TouchableOpacity onPress={() => navigation.navigate("login")}>
+              <Image
+                source={require("../../assets/profile.png")}
+                style={{ width: 40, height: 40 }}
+              />
+            </TouchableOpacity>
+          )}
+        </View>
       </View>
     </SafeAreaView>
   );

@@ -4,13 +4,18 @@ import { TouchableOpacity } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import BadgeCourse from "../../common/badge-course";
 import useFetch from "../../../hooks/useFetch";
+import { useLanguageContext } from "../../../context/LanguageContext";
 
 export default function PopularCourse() {
   const navigation = useNavigation();
   const { data: courses } = useFetch("/top_course");
+  const { language } = useLanguageContext();
+
   return (
     <View style={styles.popularCourseContainer}>
-      <Text style={styles.popularCourseTitle}>Popular Course</Text>
+      <Text style={styles.popularCourseTitle}>
+        {language === "EN" ? "Popular Course" : "Kursus Populer"}
+      </Text>
       <View style={{ paddingHorizontal: 5, paddingVertical: 15 }}>
         <FlatList
           showsHorizontalScrollIndicator={false}

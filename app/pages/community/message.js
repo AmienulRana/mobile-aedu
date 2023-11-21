@@ -21,6 +21,7 @@ import { Feather, FontAwesome, Ionicons } from "@expo/vector-icons";
 import moment from "moment/moment";
 import { Avatar } from "./home";
 import axios from "axios";
+import { useLanguageContext } from "../../context/LanguageContext";
 
 export function RowMessage({
   id,
@@ -157,6 +158,8 @@ export default function CommunityMessage() {
     tagline: "",
   });
 
+  const { language } = useLanguageContext();
+
   const handleSentMessage = async () => {
     try {
       const response = await axios.post(
@@ -231,6 +234,10 @@ export default function CommunityMessage() {
     }
   }, [router]);
 
+  useEffect(() => {
+    setTabActive(language === "EN" ? "Inbox" : "Pesan masuk");
+  }, [language]);
+
   return (
     <>
       <ScrollView showsVerticalScrollIndicator={false} style={styles.container}>
@@ -244,7 +251,9 @@ export default function CommunityMessage() {
           onPress={() => navigation.goBack()}
         >
           <Ionicons name="arrow-back-sharp" size={24} color="black" />
-          <Text style={{ fontSize: 20, fontWeight: "bold" }}>Back</Text>
+          <Text style={{ fontSize: 20, fontWeight: "bold" }}>
+            {language === "EN" ? "Back" : "Kembali"}
+          </Text>
         </TouchableOpacity>
         <View style={{ marginTop: 30, backgroundColor: COLORS.main }}></View>
 
@@ -252,11 +261,15 @@ export default function CommunityMessage() {
           <FlatList
             showsHorizontalScrollIndicator={false}
             horizontal
-            data={["Inbox", "Sent"]}
+            data={
+              language === "EN"
+                ? ["Inbox", "Sent"]
+                : ["Pesan masuk", "Terkirim"]
+            }
             renderItem={({ item }) => (
               <TouchableOpacity
                 onPress={() => setTabActive(item)}
-                style={{ marginBottom: 20, width: 100 }}
+                style={{ marginBottom: 20, minWidth: 100 }}
               >
                 <Text style={styles.tab(tabActive, item)}>{item}</Text>
               </TouchableOpacity>
@@ -279,46 +292,48 @@ export default function CommunityMessage() {
           </TouchableOpacity>
         )}
 
-        {tabActive === "Inbox" &&
-          inboxMessages
-            ?.sort((a, b) => {
-              const timeA = new Date(a?.createdAt).getTime();
-              const timeB = new Date(b?.createdAt).getTime();
-              return timeB - timeA;
-            })
-            ?.map((message, index) => (
-              <RowMessage
-                id={message?.id}
-                key={index}
-                username={
-                  message?.snder?.ms_EnterpriseProfile?.business_name ||
-                  `${message?.snder?.ms_Profile?.first_name} ${message?.snder?.ms_Profile?.last_name}`
-                }
-                message={message?.msg}
-                timeMessage={message?.createdAt}
-                allIdToDelete={allIdToDelete}
-                typeMessage="inbox"
-                handleCheckToDelete={handleCheckToDelete}
-              />
-            ))}
-        {tabActive === "Sent" &&
-          sendMessages
-            ?.sort((a, b) => {
-              const timeA = new Date(a?.createdAt).getTime();
-              const timeB = new Date(b?.createdAt).getTime();
-              return timeB - timeA;
-            })
-            ?.map((message, index) => (
-              <RowMessage
-                key={index}
-                timeMessage={message?.createdAt}
-                message={message?.msg}
-                username={
-                  message?.rc?.ms_EnterpriseProfile?.business_name ||
-                  `${message?.rc?.ms_Profile?.first_name} ${message?.rc?.ms_Profile?.last_name}`
-                }
-              />
-            ))}
+        {tabActive === "Inbox" ||
+          (tabActive === "Pesan masuk" &&
+            inboxMessages
+              ?.sort((a, b) => {
+                const timeA = new Date(a?.createdAt).getTime();
+                const timeB = new Date(b?.createdAt).getTime();
+                return timeB - timeA;
+              })
+              ?.map((message, index) => (
+                <RowMessage
+                  id={message?.id}
+                  key={index}
+                  username={
+                    message?.snder?.ms_EnterpriseProfile?.business_name ||
+                    `${message?.snder?.ms_Profile?.first_name} ${message?.snder?.ms_Profile?.last_name}`
+                  }
+                  message={message?.msg}
+                  timeMessage={message?.createdAt}
+                  allIdToDelete={allIdToDelete}
+                  typeMessage="inbox"
+                  handleCheckToDelete={handleCheckToDelete}
+                />
+              )))}
+        {tabActive === "Sent" ||
+          (tabActive === "Terkirim" &&
+            sendMessages
+              ?.sort((a, b) => {
+                const timeA = new Date(a?.createdAt).getTime();
+                const timeB = new Date(b?.createdAt).getTime();
+                return timeB - timeA;
+              })
+              ?.map((message, index) => (
+                <RowMessage
+                  key={index}
+                  timeMessage={message?.createdAt}
+                  message={message?.msg}
+                  username={
+                    message?.rc?.ms_EnterpriseProfile?.business_name ||
+                    `${message?.rc?.ms_Profile?.first_name} ${message?.rc?.ms_Profile?.last_name}`
+                  }
+                />
+              )))}
       </ScrollView>
       <TouchableOpacity
         onPress={() => setShowModal(true)}

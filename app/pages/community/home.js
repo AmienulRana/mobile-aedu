@@ -9,6 +9,7 @@ import {
   Button,
   TextInput,
   Modal,
+  Linking,
 } from "react-native";
 import React, { useCallback, useEffect, useState } from "react";
 import PageHeader from "../../components/common/page-header";
@@ -22,9 +23,16 @@ import moment from "moment";
 import axios from "axios";
 import AdsCard from "../../components/pages/community/post-card";
 import PageHeaderCommunity from "../../components/common/page-header-community";
+import { useProfileContext } from "../../context/useProfileContext";
+import { useLanguageContext } from "../../context/LanguageContext";
 
-export function Avatar({ name, size, textSize }) {
-  return (
+export function Avatar({ name, size, textSize, imageUrl }) {
+  return imageUrl ? (
+    <Image
+      source={{ uri: imageUrl }}
+      style={{ width: size || 40, height: size || 40, borderRadius: 100 }}
+    />
+  ) : (
     <View
       style={{
         flexDirection: "row",
@@ -49,6 +57,8 @@ export function PostCard({ post, isAdsPost }) {
   const [comment, setComment] = useState("");
   const [dataComment, setDataComment] = useState([]);
   const navigation = useNavigation();
+  const { profileContext } = useProfileContext();
+  const { language } = useLanguageContext();
 
   const handleLikePost = async (id) => {
     setIsLike((prev) => !prev);
@@ -59,11 +69,18 @@ export function PostCard({ post, isAdsPost }) {
     }
   };
 
-  const handleNavigateUserDetail = (user_id) => {
-    if (user_id == 2) {
+  const handleNavigateUserDetail = (user) => {
+    console.log(profileContext);
+    if (user?.ms_User?.ms_EnterpriseProfile) {
+      Linking.openURL(
+        `https://communityhub.aedu.id/profile/enterprise/${user?.ms_User?.id}`
+      );
+    } else if (user?.ms_User?.id == profileContext?.id) {
       navigation.navigate("community-profile");
     } else {
-      navigation.navigate("community-profile-detail", { user_id });
+      navigation.navigate("community-profile-detail", {
+        user_id: user?.ms_User?.id,
+      });
     }
   };
 
@@ -92,7 +109,6 @@ export function PostCard({ post, isAdsPost }) {
   };
 
   useEffect(() => {
-    console.log(post?.ms_PostComments);
     setDataComment(post?.ms_PostComments);
   }, [post]);
   return (
@@ -143,9 +159,10 @@ export function PostCard({ post, isAdsPost }) {
                       post?.ms_User?.ms_EnterpriseProfile?.business_name ||
                       post?.ms_User?.ms_Profile?.first_name
                     }
+                    imageUrl={post?.ms_User?.ms_Profile?.virtual_pp}
                   />
                   <TouchableOpacity
-                    onPress={() => handleNavigateUserDetail(post?.ms_User?.id)}
+                    onPress={() => handleNavigateUserDetail(post)}
                   >
                     <Text style={{ color: COLORS.main, fontWeight: "bold" }}>
                       {post?.ms_User?.ms_EnterpriseProfile?.business_name ||
@@ -154,7 +171,7 @@ export function PostCard({ post, isAdsPost }) {
                     </Text>
                   </TouchableOpacity>
                   <Text style={{ color: COLORS.gray }}>
-                    {getTimeAgoString(post?.createdAt)}
+                    {getTimeAgoString(post?.createdAt, language)}
                   </Text>
                 </View>
               </View>
@@ -168,10 +185,10 @@ export function PostCard({ post, isAdsPost }) {
                   post?.ms_User?.ms_EnterpriseProfile?.business_name ||
                   post?.ms_User?.ms_Profile?.first_name
                 }
+                size={50}
+                imageUrl={post?.ms_User?.ms_Profile?.virtual_pp}
               />
-              <TouchableOpacity
-                onPress={() => handleNavigateUserDetail(post?.ms_User?.id)}
-              >
+              <TouchableOpacity onPress={() => handleNavigateUserDetail(post)}>
                 <Text style={{ color: COLORS.main, fontWeight: "bold" }}>
                   {post?.ms_User?.ms_EnterpriseProfile?.business_name ||
                     `${post?.ms_User?.ms_Profile?.first_name} ${post?.ms_User?.ms_Profile?.last_name}` ||
@@ -179,7 +196,7 @@ export function PostCard({ post, isAdsPost }) {
                 </Text>
               </TouchableOpacity>
               <Text style={{ color: COLORS.gray }}>
-                {getTimeAgoString(post?.createdAt)}
+                {getTimeAgoString(post?.createdAt, language)}
               </Text>
             </View>
           )}
@@ -227,7 +244,8 @@ export function PostCard({ post, isAdsPost }) {
               color: isLike ? COLORS.blue : COLORS.gray,
             }}
           >
-            Like ({(post?.ms_PostLikes?.length || 0) + (isLike ? 1 : 0)})
+            {language === "EN" ? "Like" : "Suka"} (
+            {(post?.ms_PostLikes?.length || 0) + (isLike ? 1 : 0)})
           </Text>
         </TouchableOpacity>
         <TouchableOpacity
@@ -236,7 +254,8 @@ export function PostCard({ post, isAdsPost }) {
         >
           <FontAwesome name="comment" size={20} color={COLORS.gray} />
           <Text style={{ color: COLORS.gray }}>
-            Comment ({dataComment?.length || 0})
+            {language === "EN" ? "Comment" : "Komentar"} (
+            {dataComment?.length || 0})
           </Text>
         </TouchableOpacity>
       </View>
@@ -266,7 +285,8 @@ export function PostCard({ post, isAdsPost }) {
                 color: isLike ? COLORS.blue : COLORS.gray,
               }}
             >
-              Like ({(post?.ms_PostLikes?.length || 0) + (isLike ? 1 : 0)})
+              {language === "EN" ? "Like" : "Suka"} (
+              {(post?.ms_PostLikes?.length || 0) + (isLike ? 1 : 0)})
             </Text>
           </TouchableOpacity>
         </View>
@@ -274,15 +294,26 @@ export function PostCard({ post, isAdsPost }) {
           {dataComment?.map((comment, index) => (
             <View
               key={index}
-              style={{ flexDirection: "row", gap: 15, marginBottom: 20 }}
+              style={{
+                flexDirection: "row",
+                gap: 15,
+                marginBottom: 20,
+              }}
             >
-              <Avatar name={"Amienul"} />
+              <Avatar
+                name={
+                  comment?.ms_User?.ms_EnterpriseProfile?.business_name ||
+                  `${comment?.ms_User?.ms_Profile?.first_name} ${comment?.ms_User?.ms_Profile?.last_name}`
+                }
+                imageUrl={comment?.ms_User?.ms_Profile?.virtual_pp}
+              />
               <View
                 style={{
                   backgroundColor: "#f4f4f4",
                   paddingHorizontal: 15,
                   paddingVertical: 10,
                   borderRadius: 5,
+                  flex: 1,
                 }}
               >
                 <View
@@ -297,7 +328,7 @@ export function PostCard({ post, isAdsPost }) {
                       `${comment?.ms_User?.ms_Profile?.first_name} ${comment?.ms_User?.ms_Profile?.last_name}`}
                   </Text>
                   <Text style={{ fontSize: 12 }}>
-                    {getTimeAgoString(comment?.createdAt)}
+                    {getTimeAgoString(comment?.createdAt, language)}
                   </Text>
                 </View>
                 <Text style={{ marginTop: 5 }}>{comment?.comment}</Text>
@@ -306,7 +337,9 @@ export function PostCard({ post, isAdsPost }) {
           ))}
           {dataComment?.length === 0 && (
             <Text style={{ fontWeight: 600, textAlign: "center" }}>
-              This post no have comment
+              {language === "EN"
+                ? "This post has no comments"
+                : "Postingan ini tidak memiliki komentar"}
             </Text>
           )}
         </View>
@@ -323,7 +356,9 @@ export function PostCard({ post, isAdsPost }) {
           }}
         >
           <TextInput
-            placeholder="Write comment.."
+            placeholder={
+              language === "EN" ? "Write comment.." : "Tulis komentar.."
+            }
             style={{
               flex: 1,
               borderWidth: 1,
@@ -343,7 +378,9 @@ export function PostCard({ post, isAdsPost }) {
               paddingVertical: 10,
             }}
           >
-            <Text style={{ color: "white", textAlign: "center" }}>Send</Text>
+            <Text style={{ color: "white", textAlign: "center" }}>
+              {language === "EN" ? "Send" : "Kirim"}
+            </Text>
           </TouchableOpacity>
         </View>
       </Modal>
@@ -361,6 +398,7 @@ const searchData = [
 export default function CommunityHome() {
   const { data, fetchData, isLoading } = useFetch("/comm/postAd", URL_API_COMM);
   const [showModal, setShowModal] = useState(false);
+  const { language } = useLanguageContext();
 
   const navigation = useNavigation();
 
@@ -374,12 +412,13 @@ export default function CommunityHome() {
     setResultSearch(searchContent);
   };
 
-  useEffect(() => {
-    console.log(data?.[1]);
-  }, [data]);
   return isLoading ? (
     <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-      <Text>Redirect to Community Menu</Text>
+      <Text>
+        {language === "EN"
+          ? "Redirect to Community Menu"
+          : "Alihkan ke Menu Komunitas"}
+      </Text>
     </View>
   ) : (
     <>
@@ -398,7 +437,11 @@ export default function CommunityHome() {
           }}
         >
           <TextInput
-            placeholder="Search by Title Job, Skill, Or Username"
+            placeholder={
+              language === "EN"
+                ? "Search by Title Job, Skill, Or Username"
+                : "Cari berdasarkan Judul Pekerjaan, Keahlian, atau Nama Pengguna"
+            }
             style={{
               flex: 1,
               borderWidth: 1,
@@ -417,7 +460,9 @@ export default function CommunityHome() {
               paddingVertical: 10,
             }}
           >
-            <Text style={{ color: "white", textAlign: "center" }}>Search</Text>
+            <Text style={{ color: "white", textAlign: "center" }}>
+              {language === "EN" ? "Search" : "Cari"}
+            </Text>
           </TouchableOpacity>
         </TouchableOpacity>
         {data?.[0]?.map((post) => (
@@ -440,7 +485,11 @@ export default function CommunityHome() {
           }}
         >
           <TextInput
-            placeholder="Search by Title Job, Skill, Or Username"
+            placeholder={
+              language === "EN"
+                ? "Search by Title Job, Skill, Or Username"
+                : "Cari berdasarkan Judul Pekerjaan, Keahlian, atau Nama Pengguna"
+            }
             style={{
               // width: "100%",
               borderWidth: 1,
@@ -460,7 +509,7 @@ export default function CommunityHome() {
               marginVertical: 10,
             }}
           >
-            Search Results:
+            {language === "EN" ? "Search Results" : "Hasil Pencarian"}:
           </Text>
           {resultSearch.map((content, i) => (
             <TouchableOpacity

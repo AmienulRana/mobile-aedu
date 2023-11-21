@@ -9,12 +9,13 @@ import {
 } from "@expo/vector-icons";
 import { averageRating } from "../../utils/helper";
 import COLORS from "../../shared/COLORS";
+import { useLanguageContext } from "../../../context/LanguageContext";
 
 export function CourseInformation({ Icon, label, value }) {
   return (
     <View style={styles.infoCourseWrapper}>
       {Icon}
-      <Text>
+      <Text style={{ flex: 1 }}>
         {label && `${label}:`} {value}
       </Text>
     </View>
@@ -22,21 +23,23 @@ export function CourseInformation({ Icon, label, value }) {
 }
 
 export default function InformationDetail({ data }) {
+  const { language } = useLanguageContext();
   return (
     <>
       <CourseInformation
         Icon={<Feather name="book-open" size={20} color="black" />}
-        label="Learning Method"
+        label={language === "EN" ? "Learning Method" : "Metode Pembelajaran"}
         value={data?.course?.learning_method}
       />
       <CourseInformation
         Icon={<Ionicons name="location-outline" size={20} color="black" />}
-        label="Location"
+        label={language === "EN" ? "Location" : "Lokasi"}
         value={`${data?.course?.address}, ${data?.course?.ms_City?.name}`}
       />
+
       <CourseInformation
         Icon={<MaterialIcons name="date-range" size={20} color="black" />}
-        label="Start Date"
+        label={language === "EN" ? "Start Date" : "Tanggal Mulai"}
         value={
           moment(data?.course?.start_date).format("DD MMMM YYYY | hh:mm") +
           " WIB"
@@ -44,13 +47,13 @@ export default function InformationDetail({ data }) {
       />
       <CourseInformation
         Icon={<MaterialIcons name="language" size={20} color="black" />}
-        label="Language"
+        label={language === "EN" ? "Language" : "Bahasa"}
         value={data?.course?.language}
       />
       <CourseInformation
         Icon={<Feather name="clock" size={20} color="black" />}
-        label="Duration"
         value={data?.course?.approx_time}
+        label={language === "EN" ? "Duration" : "Durasi"}
       />
       <CourseInformation
         Icon={
@@ -60,13 +63,22 @@ export default function InformationDetail({ data }) {
             color="black"
           />
         }
-        label="Certificate"
-        value={data?.course?.certificate ? "Yes" : "No"}
+        label={language === "EN" ? "Certificate" : "Sertifikat"}
+        value={
+          data?.course?.certificate
+            ? language === "EN"
+              ? "Yes"
+              : "Ya"
+            : language === "EN"
+            ? "No"
+            : "Tidak"
+        }
       />
       <View style={styles.infoCourseWrapper}>
         <MaterialCommunityIcons name="key-outline" size={20} color="black" />
         <View style={{ flexDirection: "row" }}>
-          <Text>Credentials: </Text>
+          <Text>{language === "EN" ? "Credentials" : "Kredensial"}:</Text>
+
           {data?.course?.ms_CourseCreds?.map((credential, i) => (
             <TouchableOpacity
               onPress={() =>
@@ -95,5 +107,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     gap: 10,
     marginBottom: 9,
+    flex: 1,
   },
 });

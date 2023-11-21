@@ -31,6 +31,7 @@ import { Controller, useForm } from "react-hook-form";
 import axios from "axios";
 import { useNavigation } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useLanguageContext } from "../context/LanguageContext";
 
 export default function Profile() {
   const { data: token } = useFetch("/getToken");
@@ -51,6 +52,7 @@ export default function Profile() {
   const [showModalAbout, setShowModalAbout] = useState(false);
   const [refreshing, setRefreshing] = React.useState(false);
   const navigation = useNavigation();
+  const { language } = useLanguageContext();
 
   const [imageSource, setImageSource] = useState(null);
 
@@ -202,7 +204,9 @@ export default function Profile() {
               alignItems: "center",
             }}
           >
-            <Text style={{ fontSize: 20, fontWeight: "bold" }}>About Me</Text>
+            <Text style={{ fontSize: 20, fontWeight: "bold" }}>
+              {language === "EN" ? "About Me" : "Tentang Saya"}
+            </Text>
 
             <TouchableOpacity onPress={() => setShowModalAbout(true)}>
               <FontAwesome5 name="pencil-alt" size={15} color="black" />
@@ -223,32 +227,41 @@ export default function Profile() {
             <Text
               style={{ fontSize: 20, fontWeight: "bold", marginBottom: 15 }}
             >
-              Personal Information
+              {language === "EN" ? "Personal Information" : "Informasi Pribadi"}
             </Text>
             <TouchableOpacity onPress={() => setShowModal(true)}>
               <FontAwesome5 name="pencil-alt" size={15} color="black" />
             </TouchableOpacity>
           </View>
           <View style={{ flexDirection: "row", gap: 7, marginBottom: 5 }}>
-            <Text style={{ fontSize: 16 }}>{"\u2022"} Marital status :</Text>
+            <Text style={{ fontSize: 16 }}>
+              {"\u2022"}{" "}
+              {language === "EN" ? "Marital status" : "Status Pernikahan"}:
+            </Text>
             <Text style={{ fontSize: 16, fontWeight: "bold" }}>
               {userProfile?.profile?.marital_stats}
             </Text>
           </View>
           <View style={{ flexDirection: "row", gap: 7, marginBottom: 5 }}>
-            <Text style={{ fontSize: 16 }}>{"\u2022"} Gender :</Text>
+            <Text style={{ fontSize: 16 }}>
+              {"\u2022"} {language === "EN" ? "Gender" : "Jenis Kelamin"}:
+            </Text>
             <Text style={{ fontSize: 16, fontWeight: "bold" }}>
               {userProfile?.profile?.gender}
             </Text>
           </View>
           <View style={{ flexDirection: "row", gap: 7, marginBottom: 5 }}>
-            <Text style={{ fontSize: 16 }}>{"\u2022"} Religion :</Text>
+            <Text style={{ fontSize: 16 }}>
+              {"\u2022"} {language === "EN" ? "Religion" : "Agama"}:
+            </Text>
             <Text style={{ fontSize: 16, fontWeight: "bold" }}>
               {userProfile?.profile?.religion}
             </Text>
           </View>
           <View style={{ flexDirection: "row", gap: 7, marginBottom: 5 }}>
-            <Text style={{ fontSize: 16 }}>{"\u2022"} Age :</Text>
+            <Text style={{ fontSize: 16 }}>
+              {"\u2022"} {language === "EN" ? "Age" : "Usia"}:
+            </Text>
             <Text style={{ fontSize: 16, fontWeight: "bold" }}>
               {moment().diff(
                 moment(userProfile?.profile?.dateofbirth),
@@ -257,6 +270,7 @@ export default function Profile() {
             </Text>
           </View>
         </View>
+
         <View style={{ backgroundColor: "white", padding: 5, marginTop: 20 }}>
           <View
             style={{
@@ -268,7 +282,7 @@ export default function Profile() {
             <Text
               style={{ fontSize: 20, fontWeight: "bold", marginBottom: 15 }}
             >
-              Experience
+              {language === "EN" ? "Experience" : "Pengalaman"}
             </Text>
             <TouchableOpacity onPress={() => setShowModal(true)}>
               <FontAwesome5 name="pencil-alt" size={15} color="black" />
@@ -287,7 +301,7 @@ export default function Profile() {
             <Text
               style={{ fontSize: 20, fontWeight: "bold", marginBottom: 15 }}
             >
-              Certificate
+              {language === "EN" ? "Certificate" : "Sertifikat"}
             </Text>
 
             <TouchableOpacity onPress={() => setShowModal(true)}>
@@ -333,7 +347,7 @@ export default function Profile() {
             <Text
               style={{ fontSize: 20, fontWeight: "bold", marginBottom: 15 }}
             >
-              Education
+              {language === "EN" ? "Education" : "Pendidikan"}
             </Text>
             <TouchableOpacity onPress={() => setShowModal(true)}>
               <FontAwesome5 name="pencil-alt" size={15} color="black" />
@@ -353,7 +367,11 @@ export default function Profile() {
               marginBottom: 30,
             }}
           >
-            <Text style={{ fontSize: 16 }}>Download digital portfolio</Text>
+            <Text style={{ fontSize: 16 }}>
+              {language === "EN"
+                ? "Download digital portfolio"
+                : "Unduh portofolio digital"}
+            </Text>
             <TouchableOpacity
               onPress={() =>
                 Linking.openURL(
@@ -361,12 +379,16 @@ export default function Profile() {
                 )
               }
             >
-              <Text style={{ fontSize: 16, color: COLORS.main }}>in here!</Text>
+              <Text style={{ fontSize: 16, color: COLORS.main }}>
+                {language === "EN" ? "in here!" : "di sini!"}
+              </Text>
             </TouchableOpacity>
           </View>
         </View>
         <TouchableOpacity onPress={() => handleLogout()}>
-          <Text style={styles.buttonLogout}>Logout</Text>
+          <Text style={styles.buttonLogout}>
+            {language === "EN" ? "Logout" : "Keluar"}
+          </Text>
         </TouchableOpacity>
         <ModalInformation
           isVisible={showModal}
@@ -466,6 +488,7 @@ export function ModalInformation({ isVisible, onClose, profile }) {
     },
   });
 
+  const { language } = useLanguageContext();
   const onSubmitForm = async (data) => {
     if (data?.first_name && data?.last_name) {
       try {
@@ -494,36 +517,41 @@ export function ModalInformation({ isVisible, onClose, profile }) {
   return (
     <Modal animationType="slide" visible={isVisible} onBackdropPress={onClose}>
       <View style={stylesModal.container}>
-        <Text style={stylesModal.title}>Your Information</Text>
+        <Text style={stylesModal.title}>
+          {language === "EN" ? "Your Information" : "Informasi Anda"}
+        </Text>
+
         <Controller
           control={control}
           render={({ field }) => (
             <TextInput
-              placeholder="First Name"
+              placeholder={language === "EN" ? "First Name" : "Nama Depan"}
               onChangeText={(text) => field.onChange(text)}
               value={field.value}
               style={stylesModal.input}
             />
           )}
           name="first_name"
-          rules={{ required: "First Name is required" }}
+          rules={{ required: true }}
         />
         {errors?.first_name && (
           <Text style={stylesModal.error}>{errors?.first_name?.message}</Text>
         )}
+
         <Controller
           control={control}
           render={({ field }) => (
             <TextInput
-              placeholder="Last Name"
+              placeholder={language === "EN" ? "Last Name" : "Nama Belakang"}
               onChangeText={(text) => field.onChange(text)}
               value={field.value}
               style={stylesModal.input}
             />
           )}
           name="last_name"
-          rules={{ required: "Last Name is required" }}
+          rules={{ required: true }}
         />
+
         {errors?.last_name && (
           <Text style={stylesModal.error}>{errors?.last_name?.message}</Text>
         )}
@@ -531,42 +559,47 @@ export function ModalInformation({ isVisible, onClose, profile }) {
           control={control}
           render={({ field }) => (
             <TextInput
-              placeholder="Profile Name"
+              placeholder={language === "EN" ? "Profile Name" : "Nama Profil"}
               onChangeText={(text) => field.onChange(text)}
               value={field.value}
               style={stylesModal.input}
             />
           )}
           name="prof_name"
-          rules={{ required: "Profile name is required" }}
+          rules={{ required: true }}
         />
         {errors?.prof_name && (
           <Text style={stylesModal.error}>{errors?.prof_name?.message}</Text>
         )}
+
         <Controller
           control={control}
           render={({ field }) => (
             <TextInput
-              placeholder="Tagline"
+              placeholder={"Tagline"}
               onChangeText={(text) => field.onChange(text)}
               value={field.value}
               style={stylesModal.input}
             />
           )}
           name="tagline"
-          rules={{ required: "Tagline is required" }}
+          rules={{ required: true }}
         />
         <Text style={{ color: COLORS.gray }}>
-          Ex: Frontend Developer at Tokopedia | Mentor | Web3 Developer
+          {language === "EN" ? "Ex:" : "Contoh:"} Frontend Developer at
+          Tokopedia | Mentor | Web3 Developer
         </Text>
         {errors?.tagline && (
           <Text style={stylesModal.error}>{errors?.tagline?.message}</Text>
         )}
+
         <Controller
           control={control}
           render={({ field }) => (
             <TextInput
-              placeholder="No. Handphone"
+              placeholder={
+                language === "EN" ? "No. Handphone" : "Nomor Handphone"
+              }
               onChangeText={(text) => field.onChange(text)}
               value={field.value}
               style={stylesModal.input}
@@ -574,8 +607,9 @@ export function ModalInformation({ isVisible, onClose, profile }) {
             />
           )}
           name="phone"
-          rules={{ required: "No Handphone is required" }}
+          rules={{ required: true }}
         />
+
         {errors?.phone && (
           <Text style={stylesModal.error}>{errors?.phone?.message}</Text>
         )}
@@ -583,7 +617,9 @@ export function ModalInformation({ isVisible, onClose, profile }) {
           control={control}
           render={({ field }) => (
             <TextInput
-              placeholder="Detail Address"
+              placeholder={
+                language === "EN" ? "Detail Address" : "Alamat Lengkap"
+              }
               onChangeText={(text) => field.onChange(text)}
               value={field.value}
               style={stylesModal.input}
@@ -593,8 +629,9 @@ export function ModalInformation({ isVisible, onClose, profile }) {
             />
           )}
           name="detail_address"
-          rules={{ required: "Detail address is required" }}
+          rules={{ required: true }}
         />
+
         {errors?.detail_address && (
           <Text style={stylesModal.error}>
             {errors?.detail_address?.message}
@@ -605,10 +642,15 @@ export function ModalInformation({ isVisible, onClose, profile }) {
           onPress={handleSubmit(onSubmitForm)}
           style={stylesModal.button}
         >
-          <Text style={{ color: "white", textAlign: "center" }}>Update</Text>
+          <Text style={{ color: "white", textAlign: "center" }}>
+            {language === "EN" ? "Update" : "Perbarui"}
+          </Text>
         </TouchableOpacity>
+
         <TouchableOpacity onPress={onClose} style={stylesModal.button}>
-          <Text style={{ color: "white", textAlign: "center" }}>Close</Text>
+          <Text style={{ color: "white", textAlign: "center" }}>
+            {language === "EN" ? "Close" : "Tutup"}
+          </Text>
         </TouchableOpacity>
       </View>
     </Modal>
@@ -664,7 +706,7 @@ export function ModalAbout({ isVisible, onClose, profile }) {
             />
           )}
           name="about"
-          rules={{ required: "About input is required" }}
+          rules={{ required: true }}
         />
         {errors?.about && (
           <Text style={stylesModal.error}>{errors?.about?.message}</Text>

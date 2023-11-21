@@ -14,6 +14,7 @@ import BottomMenuBarCommunity from "../../components/common/bottom-menu-communit
 import { Avatar } from "./home";
 import axios from "axios";
 import PageHeaderCommunity from "../../components/common/page-header-community";
+import { useLanguageContext } from "../../context/LanguageContext";
 
 export default function CommunityMyNetwork() {
   const { data: myNetworks, fetchData: getMyNetworks } = useFetch(
@@ -28,6 +29,7 @@ export default function CommunityMyNetwork() {
     "/comm/follow_requests",
     URL_API_COMM
   );
+  const { language } = useLanguageContext();
 
   const handleAcceptNetwork = async (id) => {
     try {
@@ -51,10 +53,17 @@ export default function CommunityMyNetwork() {
         <PageHeaderCommunity />
         <View style={{ marginTop: 30 }}></View>
         <Text style={{ fontSize: 16, fontWeight: 800, marginBottom: 15 }}>
-          My Network ({myNetworks?.following?.length})
+          {language === "EN"
+            ? `My Network (${myNetworks?.following?.length || 0})`
+            : `Koneksi Saya (${myNetworks?.following?.length || 0})`}
         </Text>
+
         {myNetworks?.following?.length === 0 && (
-          <Text style={{ textAlign: "center" }}>You have no Connection</Text>
+          <Text style={{ textAlign: "center" }}>
+            {language === "EN"
+              ? "You have no Connection"
+              : "Anda tidak memiliki koneksi"}
+          </Text>
         )}
         {myNetworks?.following?.map((follow, index) => (
           <View key={follow?.id} style={{ marginTop: 6 }}>
@@ -66,6 +75,7 @@ export default function CommunityMyNetwork() {
                     follow?.ms_User?.ms_Profile?.last_name || ""
                   }`
                 }
+                imageUrl={follow?.ms_User?.ms_Profile?.virtual_pp}
               />
               <View style={styles.textContainer}>
                 <Text style={styles.boldText}>
@@ -85,7 +95,10 @@ export default function CommunityMyNetwork() {
                 </Text>
                 <View style={styles.extraSmallText}>
                   <Text style={{ fontSize: 12, color: COLORS.gray }}>
-                    2 same community (React.js Developer and Next.js Dev)
+                    {language === "EN"
+                      ? "2 same community"
+                      : "2 komunitas yang sama"}{" "}
+                    (React.js Developer and Next.js Dev)
                   </Text>
                 </View>
               </View>
@@ -102,7 +115,7 @@ export default function CommunityMyNetwork() {
                   ]}
                 >
                   <Text style={[styles.buttonText, { color: "#fff" }]}>
-                    Remove
+                    {language === "EN" ? "Remove" : "Hapus"}
                   </Text>
                 </TouchableOpacity>
               </View>
@@ -117,7 +130,7 @@ export default function CommunityMyNetwork() {
             marginTop: 35,
           }}
         >
-          Request Network (
+          {language === "EN" ? "Connect Request" : "Permintaan koneksi"} (
           {
             networkRequest?.filter((network) => network?.status !== "Accepted")
               ?.length
@@ -128,7 +141,9 @@ export default function CommunityMyNetwork() {
         {networkRequest?.filter((network) => network?.status !== "Accepted")
           ?.length === 0 && (
           <Text style={{ textAlign: "center" }}>
-            You have no Request Connection
+            {language === "EN"
+              ? "You have no Request Connection"
+              : "Anda tidak memiliki permintaan koneksi"}
           </Text>
         )}
         {networkRequest
@@ -162,7 +177,10 @@ export default function CommunityMyNetwork() {
                   </Text>
                   <View style={styles.extraSmallText}>
                     <Text style={{ fontSize: 12, color: COLORS.gray }}>
-                      2 same community (React.js Developer and Next.js Dev)
+                      {language === "EN"
+                        ? "2 same community"
+                        : "2 komunitas yang sama"}{" "}
+                      (React.js Developer and Next.js Dev)
                     </Text>
                   </View>
                 </View>
@@ -180,7 +198,7 @@ export default function CommunityMyNetwork() {
                     onPress={() => handleAcceptNetwork(network?.id)}
                   >
                     <Text style={[styles.buttonText, { color: "#fff" }]}>
-                      Accept
+                      {language === "EN" ? "Accept" : "Terima"}
                     </Text>
                   </TouchableOpacity>
                 </View>
@@ -195,7 +213,9 @@ export default function CommunityMyNetwork() {
             marginTop: 35,
           }}
         >
-          People you may know
+          {language === "EN"
+            ? "People you may know"
+            : "Orang yang mungkin Anda kenal"}
         </Text>
 
         {/* {networkRecommend?.find?.map((network) => (

@@ -17,9 +17,11 @@ import BottomMenuBarCommunity from "../../components/common/bottom-menu-communit
 import { getTimeAgoString } from "../../components/utils/helper";
 import PageHeaderCommunity from "../../components/common/page-header-community";
 import { useProfileContext } from "../../context/useProfileContext";
+import { useLanguageContext } from "../../context/LanguageContext";
 
 export const JobAvailable = ({ jobs }) => {
   const navigation = useNavigation();
+  const { language } = useLanguageContext();
   return (
     <>
       <View
@@ -31,7 +33,11 @@ export const JobAvailable = ({ jobs }) => {
           borderRadiusTopStart: 5,
         }}
       >
-        <Text style={{ color: "white" }}>Jobs based on your Profile</Text>
+        <Text style={{ color: "white" }}>
+          {language === "EN"
+            ? "Jobs based on your Profile"
+            : "Pekerjaan berdasarkan profil Anda"}
+        </Text>
       </View>
       {jobs?.map((job) => (
         <TouchableOpacity
@@ -55,7 +61,7 @@ export const JobAvailable = ({ jobs }) => {
                 style={styles.location}
               >{`${job?.ms_City?.name}, Indonesia (On-Site)`}</Text>
               <Text style={styles.postingDate}>
-                {getTimeAgoString(job?.createdAt)}
+                {getTimeAgoString(job?.createdAt, language)}
               </Text>
             </View>
           </View>
@@ -67,6 +73,7 @@ export const JobAvailable = ({ jobs }) => {
 
 export const MyJobs = ({ jobs }) => {
   const navigation = useNavigation();
+  const { language } = useLanguageContext();
   return (
     <>
       {jobs?.map((job) => (
@@ -94,8 +101,10 @@ export const MyJobs = ({ jobs }) => {
               >{`${job?.ms_JobAd?.ms_City?.name}, Indonesia (On-Site)`}</Text>
               <View style={{ flexDirection: "row", gap: 10 }}>
                 <Text style={styles.postingDate}>
-                  {job?.status === "Pending" && "Applied"}{" "}
-                  {getTimeAgoString(job?.createdAt)}
+                  {job?.status === "Pending" && language === "EN"
+                    ? "Applied"
+                    : "Dilamar"}{" "}
+                  {getTimeAgoString(job?.createdAt, language)}
                 </Text>
                 {job?.status === "Pending" && (
                   <Text
@@ -107,7 +116,7 @@ export const MyJobs = ({ jobs }) => {
                       },
                     ]}
                   >
-                    Pending
+                    {language === "EN" ? "Pending" : "Menunggu"}
                   </Text>
                 )}
                 {job?.status === "Accepted" && (
@@ -120,7 +129,7 @@ export const MyJobs = ({ jobs }) => {
                       },
                     ]}
                   >
-                    Accepted
+                    {language === "EN" ? "Accepted" : "Diterima"}
                   </Text>
                 )}
 
@@ -134,7 +143,7 @@ export const MyJobs = ({ jobs }) => {
                       },
                     ]}
                   >
-                    Rejected
+                    {language === "EN" ? "Rejected" : "Ditolak"}
                   </Text>
                 )}
               </View>
@@ -147,6 +156,7 @@ export const MyJobs = ({ jobs }) => {
 };
 export const SaveJobs = ({ jobs }) => {
   const navigation = useNavigation();
+  const { language } = useLanguageContext();
   return (
     <>
       {jobs?.map((job) => (
@@ -174,7 +184,8 @@ export const SaveJobs = ({ jobs }) => {
               >{`${job?.ms_JobAd?.ms_City?.name}, Indonesia (On-Site)`}</Text>
               <View style={{ flexDirection: "row", gap: 10 }}>
                 <Text style={styles.postingDate}>
-                  Saved {getTimeAgoString(job?.createdAt)}
+                  {language === "EN" ? "Saved" : "Disimpan"}{" "}
+                  {getTimeAgoString(job?.createdAt, language)}
                 </Text>
               </View>
             </View>
@@ -191,10 +202,20 @@ export default function CommunityJobs() {
   const { data: myJobs } = useFetch("/comm/getAppliedJobs/All", URL_API_COMM);
   const { data: saveJobs } = useFetch("/comm/saved_jobs", URL_API_COMM);
   const { profileContext } = useProfileContext();
+  const { language } = useLanguageContext();
+
+  const [categoryTab, setCategoryTab] = useState([
+    "All Jobs",
+    "My Jobs",
+    "Save Jobs",
+  ]);
 
   useEffect(() => {
-    console.log(profileContext);
-  }, [profileContext]);
+    const enTab = ["All Jobs", "My Jobs", "Save Jobs"];
+    const idTab = ["Semua Pekerjaan", "Pekerjaan Saya", "Disimpan"];
+    setCategoryTab(language === "EN" ? enTab : idTab);
+    setTabActive(language === "EN" ? enTab[0] : idTab[0]);
+  }, [language]);
 
   return (
     <>
@@ -206,11 +227,7 @@ export default function CommunityJobs() {
           <FlatList
             showsHorizontalScrollIndicator={false}
             horizontal
-            data={
-              !profileContext.enterpise
-                ? ["All Jobs", "My Jobs", "Save Jobs"]
-                : ["All Jobs"]
-            }
+            data={!profileContext.enterpise ? categoryTab : categoryTab[0]}
             renderItem={({ item }) => (
               <TouchableOpacity
                 onPress={() => setTabActive(item)}
@@ -222,11 +239,11 @@ export default function CommunityJobs() {
             keyExtractor={(item) => item}
           />
         </View>
-        {tabActive === "All Jobs" && <JobAvailable jobs={jobs} />}
+        {tabActive === categoryTab[0] && <JobAvailable jobs={jobs} />}
         {!profileContext?.enterpise && (
           <>
-            {tabActive === "My Jobs" && <MyJobs jobs={myJobs} />}
-            {tabActive === "Save Jobs" && <SaveJobs jobs={saveJobs} />}
+            {tabActive === categoryTab[1] && <MyJobs jobs={myJobs} />}
+            {tabActive === categoryTab[2] && <SaveJobs jobs={saveJobs} />}
           </>
         )}
       </ScrollView>

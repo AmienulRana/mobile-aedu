@@ -6,7 +6,7 @@ export const averageRating = (zms_CRatings) => {
   return sum / ratings?.length;
 };
 
-export function getTimeAgoString(createdAt) {
+export function getTimeAgoString(createdAt, language) {
   const createdMoment = moment(createdAt);
   const now = moment();
   const diffMinutes = now.diff(createdMoment, "minutes");
@@ -14,10 +14,12 @@ export function getTimeAgoString(createdAt) {
   const diffDays = now.diff(createdMoment, "days");
 
   if (diffMinutes < 60) {
-    return `${diffMinutes} minutes ago`;
+    return `${diffMinutes} ${
+      language === "EN" ? "minutes ago" : "menit yang lalu"
+    }`;
   } else if (diffHours < 24) {
-    return `${diffHours} hours ago`;
+    return `${diffHours} ${language === "EN" ? "hours ago" : "jam yang lalu"}`;
   } else {
-    return `${diffDays} days ago`;
+    return `${diffDays} ${language === "EN" ? "days ago" : "hari yang lalu"}`;
   }
 }

@@ -10,6 +10,7 @@ import {
   Button,
   Alert,
   TextInput,
+  StatusBar,
 } from "react-native";
 import React, { useCallback, useEffect, useState } from "react";
 import PageHeader from "../../components/common/page-header";
@@ -35,6 +36,7 @@ export default function ListParticipantEnterprise() {
   const [showModal, setShowModal] = useState(false);
   const [message, setMessage] = useState("");
   const [orderId, setOrderId] = useState("");
+  const [userToCheckin, setUserToCheckin] = useState({});
 
   const [score, setScore] = useState(0);
   const [scoreOf, setScoreOf] = useState(0);
@@ -89,15 +91,23 @@ export default function ListParticipantEnterprise() {
   };
 
   const showAlertCompleteCourse = () => {
-    Alert.alert("Are you sure to completed this course?", "", [
-      {
-        text: "Cancel",
-      },
-      {
-        text: "Yes, Sure",
-        onPress: () => handleCompleteCourse(),
-      },
-    ]);
+    Alert.alert(
+      "Are you sure to end this course?",
+      `Complete user ${
+        data?.pl?.filter((user) => user.status === "Success")?.length
+      } From ${
+        data?.pl?.length
+      }\n\nUsers who have not completed will not get any credentials or certificates from AEDU+`,
+      [
+        {
+          text: "Cancel",
+        },
+        {
+          text: "Yes, Sure",
+          onPress: () => handleCompleteCourse(),
+        },
+      ]
+    );
   };
 
   const handleCreateScore = async () => {
@@ -119,6 +129,37 @@ export default function ListParticipantEnterprise() {
     }
   };
 
+  const handlePresent = async () => {
+    try {
+      const response = await axios.get(
+        `${URL_API_ENTER}/enter/presence_record/${userToCheckin?.id}`
+      );
+      fetchData();
+      Alert.alert("This users successfully check-in");
+      setShowModal("");
+    } catch (error) {
+      Alert.alert("Error Check-in", "This user already check-in");
+      console.log(error);
+    }
+  };
+
+  const handleSendCertificate = async (dataUser) => {
+    try {
+      const response = await axios.get(
+        `${URL_API_ENTER}/enter/complete_and_cert/${router?.params?.learning_id}/${dataUser?.uid}`
+      );
+      if (response.status === 200) {
+        Alert.alert(
+          "Congratulations!",
+          `${rowData?.ms_User?.ms_Profile?.prof_name} has completed this course`
+        );
+      }
+    } catch (error) {
+      Alert.alert("Error!", `Opps! failed to completed this user`);
+      console.log(error);
+    }
+  };
+
   useEffect(() => {
     fetchData();
   }, [router]);
@@ -127,8 +168,7 @@ export default function ListParticipantEnterprise() {
     <>
       <ScrollView showsVerticalScrollIndicator={false} style={styles.container}>
         <PageHeaderCommunity />
-
-        <View style={{ marginTop: 50 }}>
+        <View style={{ marginTop: 20 }}>
           <View
             style={{
               flexDirection: "row",
@@ -143,7 +183,7 @@ export default function ListParticipantEnterprise() {
               onPress={showAlertCompleteCourse}
               style={[styles.cardButton, { background: COLORS.orange }]}
             >
-              <Text style={styles.cardButtonText}>Complete Course</Text>
+              <Text style={styles.cardButtonText}>End Course</Text>
             </TouchableOpacity>
           </View>
           <View style={styles.table}>
@@ -197,7 +237,10 @@ export default function ListParticipantEnterprise() {
                     <View>
                       <TouchableOpacity
                         style={{
-                          backgroundColor: "#bbf7d0",
+                          backgroundColor:
+                            rowData?.status == "Trial"
+                              ? "#ef444417"
+                              : "#bbf7d0",
                           flexDirection: "row",
                           alignItems: "center",
                           paddingVertical: 5,
@@ -206,8 +249,18 @@ export default function ListParticipantEnterprise() {
                           borderRadius: 5,
                         }}
                       >
-                        <Text style={{ color: "#22c55e", fontSize: 12 }}>
-                          {rowData?.status}
+                        <Text
+                          style={{
+                            color:
+                              rowData?.status === "Trial"
+                                ? "#ef4444"
+                                : "#22c55e",
+                            fontSize: 12,
+                          }}
+                        >
+                          {rowData?.status === "Success"
+                            ? "Complete"
+                            : rowData?.status}
                         </Text>
                       </TouchableOpacity>
                     </View>
@@ -233,48 +286,100 @@ export default function ListParticipantEnterprise() {
                     {rowData?.ms_User?.tmp_RowCalls?.[0]?.score_outof || 0}
                   </Text>
                 </Text>
-                <TouchableOpacity
-                  onPress={() => {
-                    setShowModal("message");
-                    setOrderId(rowData?.id);
+                <View
+                  style={{
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    gap: 15,
                   }}
-                  style={[
-                    styles.cardFooter,
-                    {
-                      marginTop: 10,
-                      backgroundColor: COLORS.primary,
-                      justifyContent: "center",
-                    },
-                  ]}
                 >
-                  <Text style={[styles.cardText, { color: "white" }]}>
-                    Message
-                  </Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={[styles.cardButton, { background: COLORS.orange }]}
-                >
-                  <Text style={styles.cardButtonText}>
-                    Check In{" "}
-                    {rowData?.ms_User?.tmp_RowCalls?.[0]?.days?.split(",")
-                      ?.length || 0}{" "}
-                    / {data?.cl || 0}
-                  </Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  onPress={() => {
-                    setShowModal("score");
-                    setOrderId(rowData?.uid);
+                  <TouchableOpacity
+                    onPress={() => {
+                      setShowModal("message");
+                      setOrderId(rowData?.id);
+                    }}
+                    style={[
+                      styles.cardFooter,
+                      {
+                        marginTop: 10,
+                        backgroundColor: COLORS.primary,
+                        justifyContent: "center",
+                      },
+                    ]}
+                  >
+                    <Text style={[styles.cardText, { color: "white" }]}>
+                      Message
+                    </Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={[styles.cardButton, { background: COLORS.orange }]}
+                    onPress={() => {
+                      setShowModal("check-in");
+                      setUserToCheckin(rowData);
+                    }}
+                  >
+                    <Text style={styles.cardButtonText}>
+                      Check In{" "}
+                      {rowData?.ms_User?.tmp_RowCalls?.[0]?.days?.split(",")
+                        ?.length || 0}{" "}
+                      / {data?.cl || 0}
+                    </Text>
+                  </TouchableOpacity>
+                </View>
+                <View
+                  style={{
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    gap: 15,
+                    opacity: rowData?.status === "Success" ? 0.7 : 1,
                   }}
-                  style={[
-                    styles.cardFooter,
-                    { borderWidth: 1, borderColor: COLORS.main, marginTop: 15 },
-                  ]}
                 >
-                  <Text style={[styles.cardText, { color: COLORS.main }]}>
-                    Score
-                  </Text>
-                </TouchableOpacity>
+                  <TouchableOpacity
+                    onPress={() => {
+                      setShowModal("score");
+                      setOrderId(rowData?.uid);
+                    }}
+                    style={[
+                      styles.cardFooter,
+                      {
+                        borderWidth: 1,
+                        borderColor: COLORS.main,
+                        marginTop: 15,
+                      },
+                    ]}
+                  >
+                    <Text style={[styles.cardText, { color: COLORS.main }]}>
+                      Score
+                    </Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    onPress={() => {
+                      Alert.alert(
+                        "Confirmation",
+                        "by clicking OK the user will automatically finish this course, and will get credentials and certificates from Aedu+ ",
+                        [
+                          {
+                            text: "Cancel",
+                          },
+                          {
+                            text: "OK",
+                            onPress: () => handleSendCertificate(rowData),
+                          },
+                        ]
+                      );
+                    }}
+                    style={[
+                      styles.cardFooter,
+                      { backgroundColor: COLORS.mediumgreen, marginTop: 15 },
+                    ]}
+                  >
+                    <Text style={[styles.cardText, { color: "white" }]}>
+                      Complete
+                    </Text>
+                  </TouchableOpacity>
+                </View>
               </View>
             ))}
           </View>
@@ -423,7 +528,141 @@ export default function ListParticipantEnterprise() {
             </View>
           </View>
         </Modal>
+        <Modal
+          onRequestClose={() => setShowModal("")}
+          visible={showModal === "check-in"}
+          animationType="slide"
+        >
+          <View style={{ flex: 1, padding: 15 }}>
+            <View
+              style={{
+                backgroundColor: "white",
+                padding: 3,
+              }}
+            >
+              <View
+                style={{
+                  flexDirection: "row",
+                  marginBottom: 6,
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                }}
+              >
+                <Text
+                  style={{
+                    color: COLORS.main,
+                    fontWeight: "bold",
+                    fontSize: 16,
+                  }}
+                >
+                  AEDU
+                </Text>
+                <Text style={{ fontSize: 12 }}>
+                  ORDER #
+                  {userToCheckin?.id
+                    ?.replaceAll("-", "")
+                    ?.toUpperCase()
+                    ?.substring(0, 14)}
+                </Text>
+              </View>
+              <View
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "flex-end",
+                  marginBottom: 5,
+                }}
+              >
+                <Text style={{ color: "gray" }}>
+                  {moment(
+                    userToCheckin?.ms_EnterpriseCourse?.start_date
+                  ).format("DD MMMM YYYY")}
+                </Text>
+              </View>
+              <View
+                style={{
+                  borderWidth: 1,
+                  borderColor: COLORS.main,
+                  borderRadius: 5,
+                  padding: 8,
+                  marginTop: 10,
+                }}
+              >
+                <View
+                  style={{
+                    flexDirection: "row",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                  }}
+                >
+                  <View>
+                    <Text style={{ fontWeight: "bold", fontSize: 16 }}>
+                      Ticket Name
+                    </Text>
+                    <Text
+                      style={{
+                        fontSize: 12,
+                        fontWeight: "bold",
+                        marginVertical: 1,
+                      }}
+                    >
+                      {userToCheckin?.ms_User?.ms_Profile?.prof_name}
+                    </Text>
+                  </View>
+                  <View>
+                    <Text style={{ fontWeight: "bold", fontSize: 16 }}>
+                      Course
+                    </Text>
+                    <Text
+                      style={{
+                        fontSize: 12,
+                        fontWeight: "bold",
+                        marginVertical: 1,
+                      }}
+                    >
+                      {userToCheckin?.ms_EnterpriseCourse?.title}
+                    </Text>
+                  </View>
+                  <View>
+                    <Text style={{ fontWeight: "bold", fontSize: 16 }}>
+                      Payment Status
+                    </Text>
+                    <Text
+                      style={{
+                        fontSize: 12,
+                        fontWeight: "bold",
+                        marginVertical: 1,
+                        color:
+                          userToCheckin?.status === "Paid" ? "green" : "red",
+                      }}
+                    >
+                      {userToCheckin?.status}
+                    </Text>
+                  </View>
+                </View>
+                <TouchableOpacity
+                  onPress={handlePresent}
+                  style={styles.cardButton}
+                >
+                  <Text
+                    style={{
+                      color: "white",
+                      fontWeight: "bold",
+                      marginRight: 3,
+                    }}
+                  >
+                    Check In{" "}
+                    {userToCheckin?.ms_User?.tmp_RowCalls?.[0]?.days?.split(",")
+                      ?.length || 0}{" "}
+                    / {data?.cl}
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+        </Modal>
       </ScrollView>
+      <StatusBar backgroundColor="white" barStyle="light-content" />
+
       <BottomMenuEnterprise />
     </>
   );

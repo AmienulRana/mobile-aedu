@@ -6,6 +6,7 @@ import {
   RefreshControl,
   TouchableOpacity,
   Text,
+  BackHandler,
 } from "react-native";
 import React, { useCallback, useEffect, useState } from "react";
 import PageHeader from "../../components/common/page-header";
@@ -27,21 +28,17 @@ export default function HomeEnterprise() {
   );
   const { data: advertises } = useFetch("/enter/get_ad", URL_API_ENTER);
 
-  const getDataStorage = async () => {
-    try {
-      const value = await AsyncStorage.getItem("login-mode");
-      if (value !== null) {
-        // value previously stored
-        console.log(value);
-      }
-    } catch (e) {
-      // error reading value
-    }
-  };
-
   useEffect(() => {
-    getDataStorage();
-  }, []);
+    const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      () => {
+        BackHandler.exitApp();
+        return true;
+      }
+    );
+
+    return () => backHandler.remove();
+  }, [navigation]); // Pastikan untuk menyertakan navigation sebagai dependency
 
   return (
     <>

@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "Aedu Learning",
-    "slug": "aedu-learning",
+    "name": "Aedu Plus",
+    "slug": "aedu-plus",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/splash.png",
@@ -45,16 +45,16 @@
     "web": {
       "favicon": "./assets/splash.png"
     },
-    "extra": {
-      "eas": {
-        "projectId": "dec172b2-7e8a-4e53-8afa-968b2d5c6d78"
-      }
-    },
     "updates": {
-      "url": "https://u.expo.dev/dec172b2-7e8a-4e53-8afa-968b2d5c6d78"
+      "url": "https://u.expo.dev/099f6e63-77dd-451a-b843-ce2549077eb6"
     },
     "runtimeVersion": {
       "policy": "sdkVersion"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "099f6e63-77dd-451a-b843-ce2549077eb6"
+      }
     }
   }
 }

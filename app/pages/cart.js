@@ -16,6 +16,7 @@ import useFetch, { URL_API } from "../hooks/useFetch";
 import axios from "axios";
 import Counter from "../components/common/counter";
 import { useNavigation, useRoute } from "@react-navigation/native";
+import { useLanguageContext } from "../context/LanguageContext";
 
 export default function MyCart() {
   const { data, fetchData } = useFetch("/get_cart");
@@ -23,6 +24,7 @@ export default function MyCart() {
   const [selectedMethod, setSelectedMethod] = useState(null);
   const navigation = useNavigation();
   const router = useRoute();
+  const { language } = useLanguageContext();
 
   const paymentMethods = [
     {
@@ -90,23 +92,31 @@ export default function MyCart() {
             marginBottom: 35,
           }}
         >
-          My Cart ({data?.data?.length || 0})
+          {language === "EN" ? "My Cart" : "Keranjang Saya"} (
+          {data?.data?.length || 0})
         </Text>
         {data?.data?.map((cart) => (
           <View
             key={cart?.id}
-            style={{ flexDirection: "row", gap: 15, marginBottom: 10 }}
+            style={{ flexDirection: "row", gap: 15, marginBottom: 20 }}
           >
             <Image
               source={{ uri: cart?.ms_EnterpriseCourse?.thumbnail }}
               style={{ width: 50, height: 50, borderRadius: 5 }}
             />
             <View>
-              <Text style={{ fontWeight: "700" }}>
+              <Text style={{ fontWeight: "700", flex: 1 }}>
                 {cart?.ms_EnterpriseCourse?.title}
               </Text>
-              <Text style={{ fontSize: 12, color: COLORS.gray, marginTop: 2 }}>
-                By{" "}
+              <Text
+                style={{
+                  fontSize: 12,
+                  color: COLORS.gray,
+                  marginTop: 2,
+                  marginBottom: 5,
+                }}
+              >
+                {language === "EN" ? "By" : "Dibuat Oleh"}{" "}
                 {cart?.ms_EnterpriseCourse?.ms_User?.ms_EnterpriseProfile
                   ?.business_name || "AEDU"}
               </Text>
@@ -134,7 +144,9 @@ export default function MyCart() {
                       marginTop: 5,
                     }}
                   >
-                    <Text style={{ fontSize: 12 }}>From</Text>
+                    <Text style={{ fontSize: 12 }}>
+                      {language === "EN" ? "From" : "Dari"}
+                    </Text>
                     <FontAwesome5 name="truck" size={14} color="black" />
                     <Text style={{ fontSize: 12 }}>
                       :{" "}
@@ -157,13 +169,22 @@ export default function MyCart() {
                       })
                     }
                   >
-                    <Text style={{ fontSize: 12 }}>To</Text>
+                    <Text style={{ fontSize: 12 }}>
+                      {language === "EN" ? "To" : "Ke"}{" "}
+                    </Text>
                     <FontAwesome5 name="house-user" size={14} color="black" />
                     <Text style={{ fontSize: 12 }}>
-                      : {cart?.deliver_to || "Input Your Address"}{" "}
+                      :{" "}
+                      {cart?.deliver_to ||
+                        (language === "EN"
+                          ? "Input Your Address"
+                          : "Masukkan Alamat Anda")}{" "}
                       {cart?.ongkir_type &&
                         `(${returnTypeService(cart?.ongkir_type)})`}{" "}
-                      Rp{Number(cart?.ongkir_fee || 0)?.toLocaleString("id-ID")}
+                      {cart?.ongkir_fee &&
+                        `Rp${Number(cart?.ongkir_fee || 0)?.toLocaleString(
+                          "id-ID"
+                        )}`}
                     </Text>
                   </TouchableOpacity>
                 </>
@@ -180,7 +201,7 @@ export default function MyCart() {
             marginBottom: 20,
           }}
         >
-          Payment Method
+          {language === "EN" ? "Payment Method" : "Metode Pembayaran"}
         </Text>
         <Text
           style={{
@@ -223,7 +244,7 @@ export default function MyCart() {
             marginBottom: 20,
           }}
         >
-          Payment Details
+          {language === "EN" ? "Payment Details" : "Detail Pembayaran"}
         </Text>
         <View
           style={{
@@ -232,7 +253,9 @@ export default function MyCart() {
             marginBottom: 5,
           }}
         >
-          <Text style={styles.label}>Price</Text>
+          <Text style={styles.label}>
+            <Text>{language === "EN" ? "Price" : "Harga"}</Text>
+          </Text>
           <Text style={styles.value}>
             Rp {Number(data?.total || 0).toLocaleString()}
           </Text>
@@ -244,7 +267,9 @@ export default function MyCart() {
             marginBottom: 5,
           }}
         >
-          <Text style={styles.label}>Delivery cost</Text>
+          <Text style={styles.label}>
+            <Text>{language === "EN" ? "Delivery cost" : "Biaya ongkir"}</Text>
+          </Text>
           <Text style={styles.value}>
             Rp{" "}
             {Number(
@@ -276,7 +301,9 @@ export default function MyCart() {
         </View>
 
         <TouchableOpacity style={styles.buttonPay} onPress={handlePayCourse}>
-          <Text style={{ color: "#fff", textAlign: "center" }}>Pay Now</Text>
+          <Text style={{ color: "#fff", textAlign: "center" }}>
+            <Text>{language === "EN" ? "Pay Now" : "Bayar Sekarang"}</Text>
+          </Text>
         </TouchableOpacity>
       </ScrollView>
       <BottomMenuBar />

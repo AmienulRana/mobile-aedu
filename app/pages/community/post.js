@@ -14,17 +14,20 @@ import React, { useCallback, useEffect, useState } from "react";
 import PageHeader from "../../components/common/page-header";
 import useFetch, { URL_API_COMM } from "../../hooks/useFetch";
 import BottomMenuBarCommunity from "../../components/common/bottom-menu-community";
-import { PostCard } from "./home";
+import { Avatar, PostCard } from "./home";
 import { FontAwesome, Ionicons, MaterialIcons } from "@expo/vector-icons";
 import COLORS from "../../components/shared/COLORS";
 import { useRoute } from "@react-navigation/native";
 import * as ImagePicker from "expo-image-picker";
 import axios from "axios";
 import PageHeaderCommunity from "../../components/common/page-header-community";
+import { useLanguageContext } from "../../context/LanguageContext";
+import { useProfileContext } from "../../context/useProfileContext";
 
 export default function CommunityPost() {
   const { data, fetchData } = useFetch("/comm/userPosts", URL_API_COMM);
   const [showModal, setShowModal] = useState(false);
+  const { language } = useLanguageContext();
 
   return (
     <>
@@ -37,27 +40,13 @@ export default function CommunityPost() {
           activeOpacity={0.9}
         >
           <View style={styles.profileContainer}>
-            <View
-              style={[
-                styles.profileAvatar,
-                {
-                  backgroundColor: data?.[0]?.ms_User?.ms_Profile?.first_name
-                    ? COLORS?.main
-                    : "#EDEDED",
-                },
-              ]}
-            >
-              {data?.[0]?.ms_User?.ms_Profile?.first_name ? (
-                <Text style={styles.avatarText}>
-                  {data?.[0]?.ms_User?.ms_Profile?.first_name?.slice(0, 1) ||
-                    "X"}
-                </Text>
-              ) : (
-                <FontAwesome name="user" size={20} color="#A9A9A9" />
-              )}
-            </View>
+            <Avatar name={data?.[0]?.ms_User?.ms_Profile?.first_name} />
             <TextInput
-              placeholder={"What's do you want to talk about??"}
+              placeholder={
+                language === "EN"
+                  ? "What's do you want to talk about??"
+                  : "Apa yang ingin kamu bicarakan??"
+              }
               style={styles.input}
               onPress={() => setShowModal(true)}
             />
@@ -65,13 +54,17 @@ export default function CommunityPost() {
           <View style={styles.buttonContainer}>
             <View style={styles.imageTextContainer}>
               <FontAwesome name="image" size={18} color="#06b6d4" />
-              <Text style={styles.imageText}>Add Image</Text>
+              <Text style={styles.imageText}>
+                {language === "EN" ? "Add Image" : "Tambahkan Gambar"}
+              </Text>
             </View>
             <TouchableOpacity
               onPress={() => setShowModal(true)}
               style={styles.postButton}
             >
-              <Text style={styles.buttonText}>Post</Text>
+              <Text style={styles.buttonText}>
+                {language === "EN" ? "Post" : "Kirim"}
+              </Text>
             </TouchableOpacity>
           </View>
         </TouchableOpacity>
@@ -171,6 +164,9 @@ export const ModalCreatePost = ({
   const [selectedCommunityId, setSelectedCommunityId] = useState("");
   const [description, setDescription] = useState("");
   const [tag, setTag] = useState("");
+
+  const { profileContext } = useProfileContext();
+  const { language } = useLanguageContext();
   // const router = useRoute(); // Ganti useRouter dengan state router
 
   const chooseImage = async () => {
@@ -268,21 +264,12 @@ export const ModalCreatePost = ({
             marginBottom: 16,
           }}
         >
-          <View
-            style={{
-              backgroundColor: COLORS.main,
-              width: 48,
-              height: 48,
-              borderRadius: 24,
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-          >
-            <Text style={{ color: "white" }}>A</Text>
-            {/* <Ionicons name="person" size={24} color="gray" /> */}
-          </View>
+          <Avatar name={profileContext?.first_name} />
           <View style={{ marginLeft: 8 }}>
-            <Text style={{ fontSize: 16 }}>Post to:</Text>
+            <Text style={{ fontSize: 16 }}>
+              {language === "EN" ? "Post to:" : "Kirim ke:"}
+            </Text>
+
             <TouchableOpacity
               onPress={() => setShowCommunity(!showCommunity)}
               style={{
@@ -338,7 +325,11 @@ export const ModalCreatePost = ({
           numberOfLines={3}
           onChangeText={(text) => setDescription(text)}
           value={description}
-          placeholder="What's do you want to talk about??"
+          placeholder={
+            language === "EN"
+              ? "What's do you want to talk about??"
+              : "Apa yang ingin kamu bicarakan??"
+          }
           style={{
             fontSize: 16,
             height: 120,
@@ -377,7 +368,9 @@ export const ModalCreatePost = ({
               style={{ flexDirection: "row", alignItems: "center" }}
             >
               <Ionicons name="image" size={24} color={COLORS.primary} />
-              <Text style={{ fontSize: 16, marginLeft: 8 }}>Add Image</Text>
+              <Text style={{ fontSize: 16, marginLeft: 8 }}>
+                {language === "EN" ? "Add Image" : "Tambahkan Gambar"}
+              </Text>
             </TouchableOpacity>
           ) : (
             <Image
@@ -405,7 +398,9 @@ export const ModalCreatePost = ({
               borderColor: COLORS.main,
             }}
           >
-            <Text style={{ fontSize: 16, color: COLORS.main }}>Cancel</Text>
+            <Text style={{ fontSize: 16, color: COLORS.main }}>
+              {language === "EN" ? "Cancel" : "Batal"}
+            </Text>
           </TouchableOpacity>
           <TouchableOpacity
             onPress={handleSubmit}
@@ -416,7 +411,9 @@ export const ModalCreatePost = ({
               alignItems: "center",
             }}
           >
-            <Text style={{ fontSize: 16, color: "white" }}>Create Post</Text>
+            <Text style={{ fontSize: 16, color: "white" }}>
+              {language === "EN" ? "Create Post" : "Buat Post"}
+            </Text>
           </TouchableOpacity>
         </View>
       </View>

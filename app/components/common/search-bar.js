@@ -2,8 +2,10 @@ import { StyleSheet, View, TextInput } from "react-native";
 import React from "react";
 import { Ionicons } from "@expo/vector-icons";
 import COLORS from "../shared/COLORS";
+import { useLanguageContext } from "../../context/LanguageContext";
 
 export default function SearchBar() {
+  const { language } = useLanguageContext();
   return (
     <View style={styles.container}>
       <Ionicons
@@ -12,7 +14,7 @@ export default function SearchBar() {
         color={COLORS.gray}
         style={{ marginRight: 10 }}
       />
-      <TextInput placeholder="Search" />
+      <TextInput placeholder={language === "EN" ? "Search" : "Cari"} />
     </View>
   );
 }

@@ -14,19 +14,35 @@ import AdvanceCourse from "../components/pages/home/advance-course";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import useFetch from "../hooks/useFetch";
 import BottomMenuBar from "../components/common/bottom-menu";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import UpcommingEvent from "../components/pages/home/upcomming-event";
 
 export default function Home() {
   const { data } = useFetch("/courses/1");
-  const router = useRoute();
-  const [refreshing, setRefreshing] = useState(false);
+  const [loginMode, setLoginMode] = useState(null);
   const navigation = useNavigation();
-  const onRefresh = useCallback(() => {
-    setRefreshing(true);
-    setTimeout(() => {
-      setRefreshing(false);
-      navigation.navigate("login");
-    }, 2000);
+
+  const getDataStorage = async () => {
+    try {
+      const value = await AsyncStorage.getItem("login-mode");
+      // value previously stored
+      setLoginMode(value);
+      console.log("login mode =>>>>", value);
+    } catch (e) {
+      console.log(e);
+      // error reading value
+    }
+  };
+
+  useEffect(() => {
+    getDataStorage();
   }, []);
+
+  useEffect(() => {
+    if (loginMode === "enterprise") {
+      navigation.navigate("enterprise-home");
+    }
+  }, [loginMode]);
 
   return (
     <>
@@ -35,6 +51,7 @@ export default function Home() {
         <SearchBar />
         <Image source={require("../assets/banner.png")} style={styles.banner} />
         <ContinueLearn />
+        <UpcommingEvent />
         <PopularCourse courses={data?.result} />
         <AdvanceCourse courses={data?.result} />
       </ScrollView>

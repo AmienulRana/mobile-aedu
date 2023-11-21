@@ -16,6 +16,7 @@ import useFetch, { URL_API } from "../../hooks/useFetch";
 import axios from "axios";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import RNPickerSelect from "react-native-picker-select";
+import { useLanguageContext } from "../../context/LanguageContext";
 
 export default function MyCart() {
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -33,6 +34,7 @@ export default function MyCart() {
   const { data: city, fetchData: fetchCity } = useFetch(
     `/ro_cities/${formData?.province}`
   );
+  const { language } = useLanguageContext();
   const navigation = useNavigation();
 
   const handleAddressSubmit = async () => {
@@ -109,7 +111,7 @@ export default function MyCart() {
             marginTop: 30,
           }}
         >
-          Province :
+          {language === "EN" ? "Province" : "Provinsi"}:
         </Text>
         <View style={{ borderWidth: 1, borderColor: "gray", marginBottom: 20 }}>
           <RNPickerSelect
@@ -132,7 +134,7 @@ export default function MyCart() {
             marginBottom: 10,
           }}
         >
-          City :
+          {language === "EN" ? "City" : "Kota"}:
         </Text>
         <View style={{ borderWidth: 1, borderColor: "gray", marginBottom: 20 }}>
           <RNPickerSelect
@@ -155,10 +157,14 @@ export default function MyCart() {
               marginBottom: 2,
             }}
           >
-            Detail Address :
+            {language === "EN" ? "Detail Address" : "Alamat Detail"}:
           </Text>
           <TextInput
-            placeholder="Input your detail address"
+            placeholder={
+              language === "EN"
+                ? "Input your detail address"
+                : "Masukkan alamat detail Anda"
+            }
             onChangeText={(value) =>
               setFormData({ ...formData, detail_address: value })
             }
@@ -182,7 +188,7 @@ export default function MyCart() {
             marginBottom: 10,
           }}
         >
-          Choose Shipping (JNE)
+          {language === "EN" ? "Choose Shipping" : "Pilih pengiriman"} (JNE)
         </Text>
 
         {formData?.province && formData?.city && (
@@ -247,8 +253,15 @@ export default function MyCart() {
                         : "black",
                   }}
                 >
-                  Estimate {costData?.cost[0]?.etd?.replace("-", " Sampai ")}{" "}
-                  Hari
+                  {language === "EN"
+                    ? `Estimate ${costData?.cost[0]?.etd?.replace(
+                        "-",
+                        " to "
+                      )} Days`
+                    : `Estimasi ${costData?.cost[0]?.etd?.replace(
+                        "-",
+                        " Sampai "
+                      )} Hari`}
                 </Text>
               </TouchableOpacity>
             ))}
@@ -281,7 +294,7 @@ export default function MyCart() {
             <Text
               style={{ color: COLORS.main, fontSize: 14, textAlign: "center" }}
             >
-              Back
+              {language === "EN" ? "Back" : "Kembali"}
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
@@ -298,7 +311,7 @@ export default function MyCart() {
             onPress={handleAddressSubmit}
           >
             <Text style={{ color: "white", fontSize: 14, textAlign: "center" }}>
-              Save
+              {language === "EN" ? "Save" : "Simpan"}
             </Text>
           </TouchableOpacity>
         </View>

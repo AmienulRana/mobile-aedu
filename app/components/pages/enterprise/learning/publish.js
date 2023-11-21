@@ -74,7 +74,16 @@ const PublishCourse = ({ publishes }) => {
                   </Text>
                 </View>
                 {publish?.learning_method === "Online" ? (
-                  <TouchableOpacity>
+                  <TouchableOpacity
+                    onPress={() => {
+                      navigation.navigate(
+                        publish?.course_type === "Book"
+                          ? "enterprise-purchased-material"
+                          : "enterprise-purchased",
+                        { learning_id: publish?.id }
+                      );
+                    }}
+                  >
                     <Text style={{ fontSize: 12 }}>
                       {" "}
                       Purchased : {publish?.ms_Payments?.length}

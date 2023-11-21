@@ -15,6 +15,7 @@ import { getTimeAgoString } from "../../components/utils/helper";
 import { Feather, Ionicons } from "@expo/vector-icons";
 import { Avatar } from "./home";
 import moment from "moment";
+import { useLanguageContext } from "../../context/LanguageContext";
 
 export default function CommunityProfileView() {
   const navigation = useNavigation();
@@ -24,6 +25,7 @@ export default function CommunityProfileView() {
     URL_API_COMM
   );
   const [notificationData, setNotificationData] = useState([]);
+  const { language } = useLanguageContext();
 
   const handleLoadMore = () => {
     // Mengganti halaman saat tombol "Load More" ditekan
@@ -46,12 +48,17 @@ export default function CommunityProfileView() {
         onPress={() => navigation.goBack()}
       >
         <Ionicons name="arrow-back-sharp" size={24} color="black" />
-        <Text style={{ fontSize: 20, fontWeight: "bold" }}>Back</Text>
+        <Text style={{ fontSize: 20, fontWeight: "bold" }}>
+          {language === "EN" ? "Back" : "Kembali"}
+        </Text>
       </TouchableOpacity>
       <View style={{ marginTop: 30, backgroundColor: COLORS.main }}></View>
       <Text style={{ marginBottom: 15, fontSize: 16, fontWeight: 900 }}>
-        Total Viewed ({profileViews?.length})
+        {language === "EN"
+          ? `Total Viewed (${profileViews?.length})`
+          : `Total Dilihat (${profileViews?.length})`}
       </Text>
+
       {!isLoading &&
         (profileViews?.length > 0 ? (
           profileViews
@@ -90,12 +97,15 @@ export default function CommunityProfileView() {
                     <Text style={{ flex: 1 }} numberOfLines={2} el>
                       <Text style={{ fontWeight: 900 }}>
                         {`${
-                          profile?.ms_User?.ms_Profile?.first_name || "Someone"
+                          profile?.ms_User?.ms_Profile?.first_name || "Jhon"
                         } ${
                           profile?.ms_User?.ms_Profile?.last_name || ""
                         }`}{" "}
                       </Text>
-                      Viewed your profile
+
+                      {language === "EN"
+                        ? "Viewed your profile"
+                        : "Melihat profil Anda"}
                     </Text>
                     <Text
                       style={{
@@ -112,7 +122,9 @@ export default function CommunityProfileView() {
               </View>
             ))
         ) : (
-          <Text style={{ textAlign: "center" }}>0 Profile viewed</Text>
+          <Text style={{ textAlign: "center" }}>
+            {language === "EN" ? "0 Profile viewed" : "0 Profil dilihat"}
+          </Text>
         ))}
 
       {page * 10 < profileViews?.length && (
@@ -125,7 +137,9 @@ export default function CommunityProfileView() {
           }}
           onPress={handleLoadMore}
         >
-          <Text style={{ textAlign: "center", color: "white" }}>Load More</Text>
+          <Text style={{ textAlign: "center", color: "white" }}>
+            {language === "EN" ? "Load More" : "Muat Lebih Banyak"}
+          </Text>
         </TouchableOpacity>
       )}
     </ScrollView>

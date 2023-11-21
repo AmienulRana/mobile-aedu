@@ -27,10 +27,12 @@ import moment from "moment/moment";
 import Counter from "../components/common/counter";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import Clipboard from "@react-native-clipboard/clipboard";
+import { useLanguageContext } from "../context/LanguageContext";
 
 export default function CartDetail() {
   const router = useRoute();
   const navigation = useNavigation();
+  const { language } = useLanguageContext();
   const { data, fetchData } = useFetch(`/get_xendVA/${router.params?.id}`);
   const copyToClipboard = (text) => {
     Clipboard?.setString?.("test hello");
@@ -77,7 +79,7 @@ export default function CartDetail() {
             </View>
             <View style={{ flexDirection: "row" }}>
               <Text style={{ fontSize: 12 }}>
-                Pay before :{" "}
+                {language === "EN" ? "Pay before" : "Bayar sebelum"} :{" "}
                 {moment(new Date(data?.expiration_date)).format(
                   "DD/MM/YY HH:mm"
                 )}{" "}
@@ -122,7 +124,9 @@ export default function CartDetail() {
               }}
               onPress={() => copyToClipboard(data?.account_number || "")}
             >
-              <Text style={{ fontSize: 14, marginRight: 5 }}>Copy</Text>
+              <Text style={{ fontSize: 14, marginRight: 5 }}>
+                {language === "EN" ? "Copy" : "Salin"}
+              </Text>
               {/* {!isCopied ? (
             <Image source={require('copy-icon.png')} style={{ width: 24, height: 24 }} />
           ) : (
@@ -151,7 +155,9 @@ export default function CartDetail() {
                 copyToClipboard(data?.expected_amount.toString() || "")
               }
             >
-              <Text style={{ fontSize: 14, marginRight: 5 }}>Copy</Text>
+              <Text style={{ fontSize: 14, marginRight: 5 }}>
+                {language === "EN" ? "Copy" : "Salin"}
+              </Text>
               {/* {!isCopied ? (
             <Image source={require('copy-icon.png')} style={{ width: 24, height: 24 }} />
           ) : (
@@ -162,7 +168,7 @@ export default function CartDetail() {
         </View>
 
         <Text style={{ fontWeight: "700", marginTop: 25, marginBottom: 10 }}>
-          Product Detail :
+          {language === "EN" ? "Product Detail" : "Detail Produk"}:
         </Text>
 
         {data?.details?.map((product) => (
@@ -213,7 +219,9 @@ export default function CartDetail() {
             marginTop: 25,
           }}
         >
-          <Text style={styles.label}>Price</Text>
+          <Text style={styles.label}>
+            {language === "EN" ? "Price" : "Harga"}
+          </Text>
           <Text style={styles.value}>
             Rp {Number(data?.expected_amount || 0).toLocaleString()}
           </Text>
@@ -225,7 +233,9 @@ export default function CartDetail() {
             marginBottom: 5,
           }}
         >
-          <Text style={styles.label}>Delivery cost</Text>
+          <Text style={styles.label}>
+            {language === "EN" ? "Delivery cost" : "Biaya ongkir"}
+          </Text>
           <Text style={styles.value}>
             Rp{" "}
             {Number(

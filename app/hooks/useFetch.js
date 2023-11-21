@@ -23,6 +23,7 @@ const useFetch = (endpoint, URL) => {
       setData(response?.data);
       setIsLoading(false);
     } catch (error) {
+      setIsLoading(false);
       console.log(error);
       setIsError(true);
     }

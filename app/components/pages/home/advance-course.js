@@ -4,6 +4,7 @@ import { useNavigation } from "@react-navigation/native";
 import { TouchableOpacity } from "react-native";
 import BadgeCourse from "../../common/badge-course";
 import COLORS from "../../shared/COLORS";
+import { useLanguageContext } from "../../../context/LanguageContext";
 
 const images = [
   {
@@ -22,10 +23,24 @@ export default function AdvanceCourse({ courses }) {
   const navigation = useNavigation();
   const [tabActive, setTabActive] = useState("Technology");
   const [dataCourse, setDataCourse] = useState(courses);
+  const { language } = useLanguageContext();
+
+  const categoriesEN = [
+    "Technology",
+    "Health",
+    "Art Desain",
+    "Learning Material",
+  ];
+  const categoriesID = [
+    "Teknologi",
+    "Kesehatan",
+    "Art Desain",
+    "Material Pembelajaran",
+  ];
 
   const handleFilterCourse = (tab) => {
     setTabActive(tab);
-    if (tab === "Learning Material") {
+    if (tab === "Learning Material" || tab === "Material Pembelajaran") {
       const filterMaterial = courses?.filter(
         (course) => course?.course_type == "Book"
       );
@@ -37,15 +52,20 @@ export default function AdvanceCourse({ courses }) {
   useEffect(() => {
     setDataCourse(courses);
   }, [courses]);
+  useEffect(() => {
+    setTabActive(language === "EN" ? categoriesEN[0] : categoriesID[0]);
+  }, [language]);
 
   return (
     <View style={styles.advanceCourseContainer}>
-      <Text style={styles.advanceCourseTitle}>Course</Text>
+      <Text style={styles.advanceCourseTitle}>
+        {language === "EN" ? "Course" : "Kursus"}
+      </Text>
       <View style={{ paddingHorizontal: 5, paddingVertical: 15 }}>
         <FlatList
           showsHorizontalScrollIndicator={false}
           horizontal
-          data={["Technology", "Health", "Art", "Learning Material"]}
+          data={language === "EN" ? categoriesEN : categoriesID}
           renderItem={({ item }) => (
             <TouchableOpacity
               onPress={() => handleFilterCourse(item)}

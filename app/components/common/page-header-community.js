@@ -12,12 +12,20 @@ import useFetch, { URL_API_COMM, URL_API_ENTER } from "../../hooks/useFetch";
 import COLORS from "../shared/COLORS";
 import { useNavigation } from "@react-navigation/native";
 import { useProfileContext } from "../../context/useProfileContext";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import LanguageToggle from "./language-toggle";
+import { useLanguageContext } from "../../context/LanguageContext";
 
 export default function PageHeaderCommunity() {
   const { data: userProfile } = useFetch(`/enter/getVerif`, URL_API_ENTER);
-  const { data: cookie, isLoading } = useFetch("/comm/cc", URL_API_COMM);
+  const {
+    data: cookie,
+    isLoading,
+    isError,
+  } = useFetch("/comm/cc", URL_API_COMM);
   const { profileContext, setProfileContext } = useProfileContext();
   const navigation = useNavigation();
+  const { language } = useLanguageContext();
 
   useEffect(() => {
     const payload = {
@@ -35,37 +43,42 @@ export default function PageHeaderCommunity() {
     setProfileContext({ ...profileContext, ...payload });
   }, [cookie]);
 
+  useEffect(() => {
+    if (isError) {
+      navigation.navigate("login");
+      AsyncStorage.removeItem("login-mode");
+    }
+  }, [isError]);
+
   return (
     <SafeAreaView>
       <View style={styles.container}>
-        <View>
-          <Text>Hello,</Text>
+        <View style={{ flex: 1, marginRight: 10 }}>
+          <Text>{language === "EN" ? "Hello" : "Halo"},</Text>
           {!isLoading && (
-            <Text style={styles.username}>
+            <Text
+              style={styles.username}
+              numberOfLines={1}
+              ellipsizeMode="tail"
+            >
               {!cookie?.enterprise
                 ? `${cookie?.ms_Profile?.first_name} ${cookie?.ms_Profile?.last_name}`
                 : `${cookie?.ms_EnterpriseProfile?.business_name || "There"}`}
             </Text>
           )}
         </View>
-        {cookie?.ms_Profile?.first_name ||
-        cookie?.ms_EnterpriseProfile?.business_name ? (
-          <View style={styles.avatar}>
-            <Text style={{ color: "white", fontWeight: "bold" }}>
-              {(
-                cookie?.ms_Profile?.first_name ||
-                cookie?.ms_EnterpriseProfile?.business_name
-              )?.substring(0, 1)}
-            </Text>
-          </View>
-        ) : (
-          <TouchableOpacity onPress={() => navigation.navigate("login")}>
-            <Image
-              source={require("../../assets/profile.png")}
-              style={{ width: 40, height: 40 }}
-            />
-          </TouchableOpacity>
-        )}
+        <View style={{ flexDirection: "row", gap: 10, alignItems: "center" }}>
+          <LanguageToggle />
+          {!cookie?.ms_Profile?.first_name &&
+            !cookie?.ms_EnterpriseProfile?.business_name && (
+              <TouchableOpacity onPress={() => navigation.navigate("login")}>
+                <Image
+                  source={require("../../assets/profile.png")}
+                  style={{ width: 40, height: 40 }}
+                />
+              </TouchableOpacity>
+            )}
+        </View>
       </View>
     </SafeAreaView>
   );

@@ -6,6 +6,10 @@ import {
   Text,
   TouchableOpacity,
   Image,
+  Modal,
+  TextInput,
+  Button,
+  Alert,
 } from "react-native";
 import React, { useCallback, useEffect, useState } from "react";
 import PageHeader from "../components/common/page-header";
@@ -24,10 +28,19 @@ import RenderHTML from "react-native-render-html";
 import moment from "moment/moment";
 import { useNavigation } from "@react-navigation/native";
 import BadgeCourse from "../components/common/badge-course";
+import Review from "../components/common/review";
+import { useLanguageContext } from "../context/LanguageContext";
 // import CountDown from "react-native-countdown-component";
 
 export default function MyCourse() {
   const [tabActive, setTabActive] = useState("Purchases");
+
+  const [tabsCategory, setTabsCategory] = useState([
+    "Purchases",
+    "Recently Viewed",
+    "Wishlist",
+    "Status Payment",
+  ]);
 
   const [detailStatsCourse, setDetailStatsCourse] = useState([{}]);
   const [purchases, setPurchases] = useState([]);
@@ -35,6 +48,12 @@ export default function MyCourse() {
   const { data: userWishlist } = useFetch("/profile/userWishlist");
   const { data: pendingPayments } = useFetch("/pendingPayments");
   const navigation = useNavigation();
+  const { language } = useLanguageContext();
+
+  const [showModal, setShowModal] = useState("");
+  const [totalStars, setTotalStars] = useState(0);
+  const [description, setDescription] = useState("");
+  const [idCourse, setIdCourse] = useState("");
 
   const handleGetDetailStats = async (course_id) => {
     try {
@@ -75,21 +94,61 @@ export default function MyCourse() {
     return timeInSeconds;
   };
 
+  const handleReview = async () => {
+    try {
+      const response = await axios.post(`${URL_API}/rateCourse/${idCourse}`, {
+        rating: +totalStars,
+        comment: description,
+      });
+      if (response.status === 200) {
+        setShowModal("");
+        Alert.alert("Review sent success!");
+        handleGetPurchases();
+      }
+      console.log(response);
+    } catch (error) {
+      console.log(error);
+      Alert.alert("Review sent failed!");
+    }
+  };
+
+  const handleShowModal = (id) => {
+    setShowModal("review");
+    setIdCourse(id);
+  };
+
   useEffect(() => {
     handleGetPurchases();
   }, []);
+  useEffect(() => {
+    const dataEn = [
+      "Purchases",
+      "Recently Viewed",
+      "Wishlist",
+      "Status Payment",
+    ];
+    const dataId = [
+      "Pembelian",
+      "Baru Dilihat",
+      "Disimpan",
+      "Status Pembayaran",
+    ];
+
+    setTabsCategory(language === "EN" ? dataEn : dataId);
+    setTabActive(language === "EN" ? dataEn[0] : dataId[0]);
+  }, [language]);
   return (
     <>
       <ScrollView showsVerticalScrollIndicator={false} style={styles.container}>
         <PageHeader />
         <Text style={{ fontSize: 20, fontWeight: "bold", marginTop: 20 }}>
-          My Course
+          {language === "EN" ? "My Course" : "Kursus Saya"}
         </Text>
         <View style={{ paddingHorizontal: 5, paddingVertical: 15 }}>
           <FlatList
             showsHorizontalScrollIndicator={false}
             horizontal
-            data={["Purchases", "Recently View", "Wishlist", "Status Payment"]}
+            data={tabsCategory}
             renderItem={({ item }) => (
               <TouchableOpacity
                 onPress={() => setTabActive(item)}
@@ -101,7 +160,7 @@ export default function MyCourse() {
             keyExtractor={(item) => item}
           />
         </View>
-        {tabActive === "Purchases" &&
+        {tabActive === tabsCategory[0] &&
           purchases?.map((purchased, index) => (
             <View
               key={purchased?.id}
@@ -210,12 +269,15 @@ export default function MyCourse() {
                   paddingHorizontal: 10,
                   paddingVertical: 5,
                 }}
+                onPress={() => handleShowModal(purchased?.course)}
               >
-                <Text style={{ color: "#fff" }}>Review</Text>
+                <Text style={{ color: "#fff" }}>
+                  {language === "EN" ? "Review" : "Ulasan"}
+                </Text>
               </TouchableOpacity>
             </View>
           ))}
-        {tabActive === "Recently View" &&
+        {tabActive === tabsCategory[1] &&
           recentlyView?.r?.map((recently, index) => (
             <View
               key={recently?.id}
@@ -315,7 +377,7 @@ export default function MyCourse() {
               </View>
             </View>
           ))}
-        {tabActive === "Wishlist" &&
+        {tabActive === tabsCategory[2] &&
           userWishlist?.r?.map((item, index) => (
             <TouchableOpacity
               key={index}
@@ -354,7 +416,7 @@ export default function MyCourse() {
             </TouchableOpacity>
           ))}
 
-        {tabActive === "Status Payment" &&
+        {tabActive === tabsCategory[3] &&
           pendingPayments?.pending_payments?.map((pending, index) => (
             <View
               key={pending?.id}
@@ -426,7 +488,7 @@ export default function MyCourse() {
                       }}
                     >
                       <Text style={{ color: "white", fontSize: 12 }}>
-                        Pay before:{" "}
+                        {language === "EN" ? "Pay before" : "Bayar Sebelum"}{" "}
                         {moment(
                           new Date(pending?.createdAt).getTime() +
                             24 * 60 * 60 * 1000
@@ -461,6 +523,64 @@ export default function MyCourse() {
             </View>
           ))}
       </ScrollView>
+
+      <Modal
+        animationType="slide"
+        visible={showModal === "review"}
+        onRequestClose={() => setShowModal("")}
+      >
+        <View style={{ padding: 20 }}>
+          <View>
+            <Text
+              style={{
+                fontSize: 18,
+                textAlign: "center",
+                fontWeight: "bold",
+                marginBottom: 10,
+              }}
+            >
+              {language === "EN" ? "Review" : "Ulasan"}
+            </Text>
+            <View style={{ paddingHorizontal: 30 }}>
+              <Review setTotalStars={setTotalStars} totalStars={5} />
+            </View>
+
+            <TextInput
+              style={{
+                borderWidth: 1,
+                borderColor: COLORS.gray,
+                padding: 10,
+              }}
+              multiline
+              numberOfLines={4}
+              onChangeText={(text) => setDescription(text)}
+              value={description}
+              label={language === "EN" ? "Description" : "Deskripsi"}
+              placeholder={
+                language === "EN"
+                  ? "Write your review here"
+                  : "Tulis Review Anda disini"
+              }
+              textAlignVertical="top"
+            />
+            <TouchableOpacity
+              onPress={handleReview}
+              disabled={totalStars < 3 && !description}
+              style={{
+                marginTop: 10,
+                backgroundColor: COLORS.main,
+                padding: 10,
+                borderRadius: 4,
+                opacity: totalStars < 3 && !description ? 0.6 : 1,
+              }}
+            >
+              <Text style={{ textAlign: "center", color: "white" }}>
+                {language === "EN" ? "Submit" : "Kirim"}
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
       <BottomMenuBar />
     </>
   );

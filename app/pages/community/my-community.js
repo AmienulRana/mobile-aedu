@@ -18,6 +18,7 @@ import BottomMenuBarCommunity from "../../components/common/bottom-menu-communit
 import { getTimeAgoString } from "../../components/utils/helper";
 import { Feather, Ionicons } from "@expo/vector-icons";
 import axios from "axios";
+import { useLanguageContext } from "../../context/LanguageContext";
 
 export default function MyCommunity() {
   const navigation = useNavigation();
@@ -30,6 +31,8 @@ export default function MyCommunity() {
     "/comm/getGroups",
     URL_API_COMM
   );
+
+  const { language } = useLanguageContext();
 
   const handleJoinCommunity = async (id_community) => {
     try {
@@ -56,11 +59,24 @@ export default function MyCommunity() {
           onPress={() => navigation.goBack()}
         >
           <Ionicons name="arrow-back-sharp" size={24} color="black" />
-          <Text style={{ fontSize: 20, fontWeight: "bold" }}>Back</Text>
+          <Text style={{ fontSize: 20, fontWeight: "bold" }}>
+            {language === "EN" ? "Back" : "Kembali"}
+          </Text>
         </TouchableOpacity>
 
         <View style={{ marginTop: 30, backgroundColor: COLORS.main }}></View>
-        <Text style={{ fontWeight: "bold", fontSize: 16 }}>My Community</Text>
+
+        <Text style={{ fontWeight: "bold", fontSize: 16 }}>
+          {language === "EN" ? "My Community" : "Komunitas Saya"}
+        </Text>
+
+        {!isLoading && communitys?.length === 0 && (
+          <Text style={{ textAlign: "center" }}>
+            {language === "EN"
+              ? "You have no community"
+              : "Anda tidak memiliki komunitas"}
+          </Text>
+        )}
         {!isLoading && communitys?.length === 0 && (
           <Text style={{ textAlign: "center" }}>You no have community</Text>
         )}
@@ -77,8 +93,11 @@ export default function MyCommunity() {
                 />
                 <View>
                   <Text style={{ fontSize: 10, color: COLORS.gray }}>
-                    PUBLIC COMMUNITY
+                    {language === "EN"
+                      ? "PUBLIC COMMUNITY"
+                      : "KOMUNITAS PUBLIK"}
                   </Text>
+
                   <TouchableOpacity
                     onPress={() =>
                       navigation.navigate("community-detail", {
@@ -93,7 +112,8 @@ export default function MyCommunity() {
                   <Text
                     style={{ fontSize: 12, color: COLORS.gray, marginTop: 5 }}
                   >
-                    {community?.ms_CommGrpMembers?.length} Members
+                    {community?.ms_CommGrpMembers?.length}{" "}
+                    {language === "EN" ? "Members" : "Anggota"}
                   </Text>
                 </View>
               </View>
@@ -101,7 +121,7 @@ export default function MyCommunity() {
           ))}
 
         <Text style={{ fontWeight: "bold", fontSize: 16, marginTop: 30 }}>
-          Orther Community
+          {language === "EN" ? "Other Community" : "Komunitas Lainnya"}
         </Text>
 
         {!isLoading &&
@@ -124,7 +144,9 @@ export default function MyCommunity() {
                     >
                       <View style={{ flex: 1 }}>
                         <Text style={{ fontSize: 10, color: COLORS.gray }}>
-                          PUBLIC COMMUNITY
+                          {language === "EN"
+                            ? "PUBLIC COMMUNITY"
+                            : "KOMUNITAS PUBLIK"}
                         </Text>
                         <TouchableOpacity
                           onPress={() =>
@@ -148,7 +170,8 @@ export default function MyCommunity() {
                             marginTop: 5,
                           }}
                         >
-                          {group?.ms_CommGrpMembers?.length} Members
+                          {language === "EN" ? "Members" : "Anggota"}{" "}
+                          {group?.ms_CommGrpMembers?.length}
                         </Text>
                       </View>
                       <TouchableOpacity
@@ -168,7 +191,7 @@ export default function MyCommunity() {
                         <Text
                           style={{ textAlign: "center", color: COLORS.main }}
                         >
-                          Join
+                          {language === "EN" ? "Join" : "Gabung"}
                         </Text>
                       </TouchableOpacity>
                     </View>
@@ -176,23 +199,6 @@ export default function MyCommunity() {
                 </View>
               )
           )}
-
-        {/* <View style={{ paddingVertical: 15 }}>
-            <FlatList
-              showsHorizontalScrollIndicator={false}
-              horizontal
-              data={["All Jobs", "My Jobs", "Save Jobs"]}
-              renderItem={({ item }) => (
-                <TouchableOpacity
-                  onPress={() => setTabActive(item)}
-                  style={{ marginBottom: 20 }}
-                >
-                  <Text style={styles.tab(tabActive, item)}>{item}</Text>
-                </TouchableOpacity>
-              )}
-              keyExtractor={(item) => item}
-            />
-          </View> */}
       </ScrollView>
     </>
   );

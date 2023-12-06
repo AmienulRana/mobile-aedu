@@ -112,13 +112,11 @@ export default function AdvertiseEnterprise() {
             >
               <View style={{ flex: 1 }}>
                 <TouchableOpacity
-                  href={`https://learning.aedu.id/course/${"12321"}`}
+                  onPress={() => navigation?.navigate('enterprise-ads-create', {ads_id: advertise?.id})}
                   style={{
                     fontWeight: "bold",
                     textDecorationLine: "underline",
                   }}
-                  target="_blank"
-                  rel="noreferrer"
                 >
                   <Text>{advertise?.primary_text || ""}</Text>
                 </TouchableOpacity>

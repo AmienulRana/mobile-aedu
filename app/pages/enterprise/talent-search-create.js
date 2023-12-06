@@ -34,7 +34,7 @@ export default function TalentSearchCreate() {
   const {
     control,
     handleSubmit,
-    formState: { errors, is },
+    formState: { errors },
     watch,
     setValue,
   } = useForm({
@@ -70,6 +70,9 @@ export default function TalentSearchCreate() {
 
   const [jobFunctions, setJobFunctions] = useState([]);
 
+  const { data: detailTalentSearch, fetchData: getDetailTalentSearch } =
+    useFetch(`/enter/myjobad/${router.params?.job_id}`, URL_API_ENTER);
+
   const onChange = (event, selectedDate) => {
     const currentDate = selectedDate;
     setShow(false);
@@ -87,7 +90,7 @@ export default function TalentSearchCreate() {
       const payload = {
         ...data,
         exp: `${data?.exp || 0} Years`,
-        skills: selectedCredentials?.map((skill) => skill?.name)?.join(", "),
+        skills: selectedCredentials?.map((skill) => skill?.name || skill)?.join(", "),
         location: watch("location.id"),
       };
       console.log(payload);
@@ -140,6 +143,28 @@ export default function TalentSearchCreate() {
     };
     filterfunctionSector();
   }, [watch("job_sector")]);
+
+  useEffect(() => {
+    getDetailTalentSearch();
+  }, [router]);
+  useEffect(() => {
+    console.log(detailTalentSearch);
+    setValue("job_name", detailTalentSearch?.job_name);
+    setValue("location.id", detailTalentSearch?.ms_City?.id);
+    setValue("location.name", detailTalentSearch?.ms_City?.name);
+    setValue("work_hours", detailTalentSearch?.work_hours);
+    setValue("job_type", detailTalentSearch?.job_type);
+    setValue("loc_type", detailTalentSearch?.loc_type);
+    setValue("job_sector", detailTalentSearch?.job_sector);
+    setValue("job_func", detailTalentSearch?.job_func);
+    setValue("description", detailTalentSearch?.description);
+    setValue("degree", detailTalentSearch?.degree);
+    setValue("exp", detailTalentSearch?.exp?.split(" ")?.[0]);
+    setValue("start_date", detailTalentSearch?.start_date);
+    setValue("end_date", detailTalentSearch?.end_date);
+    setValue("language", detailTalentSearch?.language);
+    setSelectedCredentials(detailTalentSearch?.skills?.split(","));
+  }, [detailTalentSearch]);
 
   return (
     <>

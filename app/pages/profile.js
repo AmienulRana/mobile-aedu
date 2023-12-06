@@ -356,6 +356,59 @@ export default function Profile() {
           <Timeline data={educationTimeline} />
         </View>
         <View style={{ backgroundColor: "white", padding: 5, marginTop: 20 }}>
+          <View
+            style={{
+              flexDirection: "row",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
+            <Text
+              style={{ fontSize: 20, fontWeight: "bold", marginBottom: 15 }}
+            >
+              {language === "EN" ? "Medical Journal" : "Jurnal Medis"}
+            </Text>
+            <TouchableOpacity onPress={() => setShowModal("journal")}>
+              <FontAwesome5 name="pencil-alt" size={15} color="black" />
+            </TouchableOpacity>
+          </View>
+          <View
+            style={{
+              marginBottom: 12,
+              paddingBottom: 12,
+              borderBottomWidth: 1,
+            }}
+          >
+            <View
+              style={{ flexDirection: "row", justifyContent: "space-between" }}
+            >
+              <Text style={{ fontWeight: "bold", fontSize: 16 }}>
+                Journal Title
+              </Text>
+            </View>
+            <View style={{ marginTop: 8 }}>
+              <Text
+                style={{
+                  fontSize: 14,
+                  flexDirection: "row",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                }}
+              >
+                {language === "EN" ? "Link to Journal" : "Link ke jurnal"}
+                <TouchableOpacity
+                  onPress={() => Linking.openURL("https://google.com")}
+                >
+                  <EvilIcons name="external-link" size={24} color="black" />
+                </TouchableOpacity>
+              </Text>
+              <Text style={{ fontSize: 14, marginTop: 6 }}>
+                this is description to jurnal
+              </Text>
+            </View>
+          </View>
+        </View>
+        <View style={{ backgroundColor: "white", padding: 5, marginTop: 20 }}>
           <Text style={{ fontSize: 20, fontWeight: "bold", marginBottom: 15 }}>
             Digital Portfolio
           </Text>
@@ -386,14 +439,23 @@ export default function Profile() {
           </View>
         </View>
         <TouchableOpacity onPress={() => handleLogout()}>
-          <Text style={styles.buttonLogout}>
+          <Text style={[styles.buttonLogout, {backgroundColor: 'transparent', color: 'red', borderColor: 'red', borderWidth: 2}]}>
             {language === "EN" ? "Logout" : "Keluar"}
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => Linking.openURL('https://learning.aedu.id/remove-account')}>
+          <Text style={styles.buttonLogout}>
+            {language === "EN" ? "Delete Account" : "Hapus Akun"}
           </Text>
         </TouchableOpacity>
         <ModalInformation
           isVisible={showModal}
           onClose={() => setShowModal(false)}
           profile={userProfile?.profile}
+        />
+        <ModalJournal
+          isVisible={showModal === "journal"}
+          onClose={() => setShowModal(false)}
         />
         <ModalAbout
           isVisible={showModalAbout}
@@ -644,6 +706,110 @@ export function ModalInformation({ isVisible, onClose, profile }) {
         >
           <Text style={{ color: "white", textAlign: "center" }}>
             {language === "EN" ? "Update" : "Perbarui"}
+          </Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity onPress={onClose} style={stylesModal.button}>
+          <Text style={{ color: "white", textAlign: "center" }}>
+            {language === "EN" ? "Close" : "Tutup"}
+          </Text>
+        </TouchableOpacity>
+      </View>
+    </Modal>
+  );
+}
+export function ModalJournal({ isVisible, onClose }) {
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+    setValue,
+    watch,
+  } = useForm({
+    defaultValues: {
+      title: "",
+      link: "",
+      desc: "",
+    },
+  });
+
+  const { language } = useLanguageContext();
+  const onSubmitForm = async (data) => {
+      try {
+
+        const fd = new FormData();
+        fd.append('title', data?.title);
+        fd.append('desc', watch('description'));
+        fd.append('link', data?.url);
+        const response = await axios.post(`${URL_API}/add_sciworks`, fd);
+        if (response.status === 200) {
+          onClose();
+        }
+      } catch (error) {
+        Alert.alert(language === 'EN' ? 'Failed to save journal' : 'Gagal menyimpan jurnal')
+        console.log(error);
+      }
+    }
+  return (
+    <Modal animationType="slide" visible={isVisible} onBackdropPress={onClose}>
+      <View style={stylesModal.container}>
+        <Text style={stylesModal.title}>
+          {language === "EN" ? "Medical Journal" : "Jurnal Medis"}
+        </Text>
+
+        <Controller
+          control={control}
+          render={({ field }) => (
+            <TextInput
+              placeholder={language === "EN" ? "Title" : "Judul"}
+              onChangeText={(text) => field.onChange(text)}
+              value={field.value}
+              style={stylesModal.input}
+            />
+          )}
+          name="title"
+          rules={{ required: true }}
+        />
+
+        <Controller
+          control={control}
+          render={({ field }) => (
+            <TextInput
+              placeholder={language === "EN" ? "Description" : "Deskripsi"}
+              onChangeText={(text) => field.onChange(text)}
+              value={field.value}
+              style={stylesModal.input}
+              multiline
+              numberOfLines={8}
+              textAlignVertical="top"
+            />
+          )}
+          name="desc"
+          rules={{ required: true }}
+        />
+
+        <Controller
+          control={control}
+          render={({ field }) => (
+            <TextInput
+              placeholder={
+                language === "EN" ? "URL Journal Medical" : "URL Jurnal Medis"
+              }
+              onChangeText={(text) => field.onChange(text)}
+              value={field.value}
+              style={stylesModal.input}
+            />
+          )}
+          name="link"
+          rules={{ required: true }}
+        />
+
+        <TouchableOpacity
+          onPress={handleSubmit(onSubmitForm)}
+          style={stylesModal.button}
+        >
+          <Text style={{ color: "white", textAlign: "center" }}>
+            {language === "EN" ? "Save" : "Simpan"}
           </Text>
         </TouchableOpacity>
 

@@ -30,16 +30,19 @@ const PublishCourse = ({ publishes }) => {
             source={{ uri: publish?.tl }}
             style={{ width: 60, height: 60, resizeMode: "cover" }}
           />
-          <View style={{ flex: 1, alignItems: "center", padding: 5 }}>
-            <View style={{ flex: 1 }}>
+          <View style={{ flex: 1, padding: 10, }}>
+            <View style={{flex:1}}>
               <TouchableOpacity
                 onPress={() => {
                   // Handle navigation to the course link here
+                  navigation.navigate('enterprise-learning-create', {course_id: publish?.id})
                 }}
                 style={{ fontWeight: "bold", textDecorationLine: "underline" }}
               >
                 <Text
-                  style={{ fontSize: 16, fontWeight: 900, marginBottom: 4 }}
+                  style={{ fontSize: 16, fontWeight: 900, marginBottom: 4, }}
+                  numberOfLines={2}
+                  ellipsizeMode="tail"
                 >
                   {publish?.title}
                 </Text>

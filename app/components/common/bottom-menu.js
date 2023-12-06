@@ -47,13 +47,13 @@ const BottomMenuBar = () => {
   return !isKeyboardVisible ? (
     <View style={styles.menuBar}>
       <TouchableOpacity
-        onPress={() => navigation.navigate("home")}
+        onPress={() => navigation.navigate(router?.name === 'discover' ? "discover" : router?.name === 'home' ? "discover" : "discover")}
         style={styles.menuItem}
       >
         <Ionicons
           name="home"
           size={24}
-          color={router.name === "home" ? COLORS.main : COLORS.gray}
+          color={(router.name === "home" || router.name === "discover" ) ? COLORS.main : COLORS.gray}
         />
       </TouchableOpacity>
       <TouchableOpacity
@@ -66,6 +66,7 @@ const BottomMenuBar = () => {
           color={router.name === "my-course" ? COLORS.main : COLORS.gray}
         />
       </TouchableOpacity>
+      {/* {router?.name !== 'discover' && (
       <TouchableOpacity
         style={styles.menuItem}
         onPress={() => navigation.navigate("community-home")}
@@ -76,6 +77,8 @@ const BottomMenuBar = () => {
           color={true ? COLORS.gray : "black"}
         />
       </TouchableOpacity>
+
+      )} */}
       <TouchableOpacity style={styles.menuItem}>
         <FontAwesome
           onPress={() => navigation.navigate("cart")}

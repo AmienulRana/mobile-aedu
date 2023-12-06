@@ -4,6 +4,9 @@ import {
   Image,
   ScrollView,
   RefreshControl,
+  BackHandler,
+  Text,
+  TouchableOpacity,
 } from "react-native";
 import React, { useCallback, useEffect, useState } from "react";
 import PageHeader from "../components/common/page-header";
@@ -16,11 +19,15 @@ import useFetch from "../hooks/useFetch";
 import BottomMenuBar from "../components/common/bottom-menu";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import UpcommingEvent from "../components/pages/home/upcomming-event";
+import { useLanguageContext } from "../context/LanguageContext";
+import COLORS from "../components/shared/COLORS";
 
 export default function Home() {
-  const { data } = useFetch("/courses/1");
+  const { data, fetchData } = useFetch("/courses/1");
   const [loginMode, setLoginMode] = useState(null);
   const navigation = useNavigation();
+  const router = useRoute();
+  const { language } = useLanguageContext();
 
   const getDataStorage = async () => {
     try {
@@ -43,17 +50,50 @@ export default function Home() {
       navigation.navigate("enterprise-home");
     }
   }, [loginMode]);
-
   return (
     <>
       <ScrollView showsVerticalScrollIndicator={false} style={styles.container}>
         <PageHeader />
         <SearchBar />
-        <Image source={require("../assets/banner.png")} style={styles.banner} />
+        {router?.params?.category === "Tech" && (
+          <Image
+            source={require("../assets/banner/tech.png")}
+            style={styles.banner}
+          />
+        )}
+        {router?.params?.category === "Health" && (
+          <Image
+            source={require("../assets/banner/health.png")}
+            style={styles.banner}
+          />
+        )}
+        {router?.params?.category === "Art" && (
+          <Image
+            source={require("../assets/banner/art.png")}
+            style={styles.banner}
+          />
+        )}
         <ContinueLearn />
         <UpcommingEvent />
-        <PopularCourse courses={data?.result} />
+        {/* <PopularCourse courses={data?.result} /> */}
         <AdvanceCourse courses={data?.result} />
+
+        <View style={{ marginBottom: 40, backgroundColor: "white", borderWidth: 1, borderColor: COLORS.main, padding: 15, borderRadius: 15 }}>
+          <Text style={{ fontWeight: 700, fontSize: 18 }}>
+            {language === "EN"
+              ? "Join our community"
+              : "Bergabung dengan komunitas kami"}
+          </Text>
+          <Text style={{ marginTop: 20 }}>
+            {language === "EN"
+              ? "Joining the a Community member is a great introduction to the quickly evolving and specialized field of online education. Membership is free and gives you the opportunity to expand your professional development by networking in worldwide."
+              : "Bergabung dengan anggota Komunitas merupakan pengenalan yang bagus terhadap bidang pendidikan online yang berkembang pesat dan terspesialisasi. Keanggotaannya gratis dan memberi Anda kesempatan untuk mengembangkan pengembangan profesional Anda melalui jaringan di seluruh dunia."}
+          </Text>
+
+          <TouchableOpacity onPress={() => navigation.navigate('community-home', {community_type: router?.params?.category})} style={{backgroundColor: COLORS.main, marginTop: 20, paddingVertical: 8, borderRadius: 5,}}>
+            <Text style={{color:'white', textAlign:'center'}}>{language === 'EN' ? 'Community' : 'Komunitas'}</Text>
+          </TouchableOpacity>
+        </View>
       </ScrollView>
       <BottomMenuBar />
     </>
@@ -67,5 +107,9 @@ const styles = StyleSheet.create({
   },
   banner: {
     marginTop: 30,
+    height: 200,
+    borderRadius: 20,
+    objectFit: "cover",
+    width: "100%",
   },
 });

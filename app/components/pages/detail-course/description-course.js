@@ -5,14 +5,18 @@ import {
   View,
   useWindowDimensions,
 } from "react-native";
-import React from "react";
+import React, { useState } from "react";
 import RenderHTML from "react-native-render-html";
 import COLORS from "../../shared/COLORS";
 import { useLanguageContext } from "../../../context/LanguageContext";
+import { FontAwesome } from "@expo/vector-icons";
+import { TouchableOpacity } from "react-native";
+import ModalReport from "./modal-report";
 
 export default function DescriptionCourse({ data }) {
   const { width } = useWindowDimensions();
   const { language } = useLanguageContext();
+  const [showModal, setShowModal] = useState(false);
 
   return (
     <View>
@@ -33,6 +37,20 @@ export default function DescriptionCourse({ data }) {
             width: width - 2 * 25,
           }}
         />
+        <TouchableOpacity
+        onPress={() => setShowModal(true)}
+          style={{
+            flexDirection: "row",
+            justifyContent: "flex-end",
+            alignItems: "center",
+            marginTop: 10,
+          }}
+        >
+          <FontAwesome name="flag" size={14} color={COLORS.gray} />
+          <Text style={{ fontSize: 14, marginLeft: 8, color: COLORS.gray }}>
+            {language === "EN" ? "Report" : "Laporkan"}
+          </Text>
+        </TouchableOpacity>
         <Text style={{ marginTop: 20, fontSize: 16, fontWeight: "bold" }}>
           {language === "EN" ? "About Learning" : "Tentang Pembelajaran"}
         </Text>
@@ -43,6 +61,8 @@ export default function DescriptionCourse({ data }) {
           />
         </View>
       </View>
+      <ModalReport showModal={showModal} setShowModal={setShowModal} />
+
     </View>
   );
 }

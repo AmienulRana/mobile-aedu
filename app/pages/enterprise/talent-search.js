@@ -111,9 +111,12 @@ export default function TalentSearchEnterprise() {
             <Text style={{ fontSize: 12, color: "gray" }}>
               {job?.ms_JobSector?.name?.toUpperCase()}
             </Text>
+            <TouchableOpacity onPress={() => navigation.navigate('enterprise-talent-create', {job_id: job?.id})}>
             <Text style={{ fontSize: 18, fontWeight: "bold" }}>
               {job?.job_name}
             </Text>
+
+            </TouchableOpacity>
             <Text
               style={{
                 fontSize: 14,

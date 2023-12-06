@@ -27,7 +27,7 @@ import Credentials from "../../components/common/credentials";
 import axios from "axios";
 import * as ImagePicker from "expo-image-picker";
 
-const COURSE_TYPE = ["Learning Material", "Premium", "Subscription"];
+const COURSE_TYPE = ["Premium", "Subscription", "Learning Material"];
 const LANGUAGE = [
   { label: "English", value: "English" },
   { label: "Indonesia", value: "Indonesia" },
@@ -79,6 +79,7 @@ export default function LearningCreate() {
       course_type: "Subscription" | "Premium" | "Book" | "",
       stock: "0",
       weight: "0",
+      unit: 0,
     },
   });
   const { data: categoryCourse } = useFetch("/enter/course_cat", URL_API_ENTER);
@@ -86,10 +87,13 @@ export default function LearningCreate() {
     `/enter/subcourse_cat/${watch("category")}`,
     URL_API_ENTER
   );
+  const { data: courseDetail, fetchData: fetchDetailCourse } = useFetch(
+    `/enter/courseDetail/${router.params?.course_id}`,
+    URL_API_ENTER
+  );
 
-  const [tabActive, setTabActive] = useState("Learning Material");
-  const [courseType, setCourseType] = useState("Book"); // or 'Learning Material' based on the default selection
-
+  const [tabActive, setTabActive] = useState("Premium");
+  const [courseType, setCourseType] = useState("Book");
   const [date, setDate] = useState(new Date(1598051730000));
   const [mode, setMode] = useState("date");
   const [show, setShow] = useState("");
@@ -147,7 +151,7 @@ export default function LearningCreate() {
     try {
       const fd = new FormData();
       fd.append("title", watch("title"));
-      fd.append("price", String(watch("price")));
+      fd.append("price", watch("price"));
       fd.append("description", watch("description"));
       fd.append("stock", String(watch("stock")));
       fd.append("course_type", watch("course_type"));
@@ -170,8 +174,7 @@ export default function LearningCreate() {
     }
   };
   const onSubmit = async (data) => {
-    console.log(data);
-    console.log(imageFile);
+    console.log();
     if (watch("course_type") === "Book") {
       onSubmitDataBook();
       return;
@@ -203,8 +206,10 @@ export default function LearningCreate() {
       });
       fd.append("cred", getIdCredentials.join(","));
       const response = await axios({
-        method: "POST",
-        url: `${URL_API_ENTER}/enter/addCourse`,
+        method: router?.params?.course_id ? "PUT" : "POST",
+        url: router?.params?.course_id
+          ? `${URL_API_ENTER}/enter/updateCourse/${router.params?.course_id}`
+          : `${URL_API_ENTER}/enter/addCourse`,
         data: fd,
       });
       if (response.status === 200) {
@@ -212,7 +217,12 @@ export default function LearningCreate() {
       }
       console.log(response);
     } catch (error) {
-      Alert.alert("Failed", "Failed to add new Learning Material");
+      Alert.alert(
+        "Failed",
+        `Failed to ${
+          router.params?.course_id ? "edit" : "add new"
+        }  Learning Material`
+      );
       console.log(error);
     }
   };
@@ -259,16 +269,72 @@ export default function LearningCreate() {
       });
     }
   };
-
-  // const onSubmit = (data) => {
-  //   console.log(data);
-  // };
   useEffect(() => {
     fecthSubCategory();
   }, [watch("category")]);
   useEffect(() => {
     getCredentials();
   }, [watch("sub_category")]);
+  useEffect(() => {
+    fetchDetailCourse();
+  }, [router]);
+  useEffect(() => {
+    console.log(courseDetail);
+    const levelMaterial =
+      courseDetail?.level == "Beginner"
+        ? 1
+        : courseDetail?.level == "Intermediate"
+        ? 2
+        : 3;
+    const levelCourse =
+      courseDetail?.level === "Beginner"
+        ? 1
+        : courseDetail?.level === "Intermediate"
+        ? 2
+        : 3;
+    setValue("title", courseDetail?.title);
+    setValue("price", courseDetail?.price);
+    setValue("description", courseDetail?.description);
+    setValue("language", courseDetail?.language);
+    setValue(
+      "level",
+      courseDetail?.course_type === "Book" ? levelMaterial : levelCourse
+    );
+    setValue("category", courseDetail?.category);
+    setValue("unit", courseDetail?.unit);
+    setValue("weight", courseDetail?.weight);
+    setValue("stock", courseDetail?.stock);
+    setValue(
+      "learning_method",
+      courseDetail?.course_type === "Subscription"
+        ? "Online"
+        : courseDetail?.learning_method
+    );
+    setValue("course_cat", courseDetail?.course_cat);
+    setValue("course_type", courseDetail?.course_type || "Subscription");
+    setTabActive(
+      courseDetail?.course_type === "Book"
+        ? "Learning Material"
+        : courseDetail?.course_type || "Premium"
+    );
+    setCourseType(courseDetail?.course_type);
+    setValue("address", courseDetail?.address);
+    setValue(
+      "start_date",
+      moment(courseDetail?.start_date).format("YYYY-MM-DDTHH:mm")
+    );
+    setValue(
+      "end_date",
+      moment(courseDetail?.end_date).format("YYYY-MM-DDTHH:mm")
+    );
+    setValue("approx_time", courseDetail?.approx_time);
+    setValue("certificate", courseDetail?.certificate === "true");
+    setValue("thumbnail_preview", courseDetail?.thumbnail);
+    setSelectedImage({ ...selectedImage, uri: watch("thumbnail_preview") });
+
+    setAssignments(courseDetail?.assignments);
+    setRequirements(courseDetail?.requirements);
+  }, [courseDetail]);
   return (
     <>
       <ScrollView showsVerticalScrollIndicator={false} style={styles.container}>
@@ -316,35 +382,65 @@ export default function LearningCreate() {
             marginBottom: 30,
           }}
         >
-          {COURSE_TYPE.map((data, index) => (
-            <TouchableOpacity
-              key={index}
-              style={[
-                {
-                  padding: 10,
-                  borderBottomWidth: 2,
-                  borderColor: "transparent",
-                },
-                tabActive === data && {
-                  borderColor: COLORS.main, // Use your desired active color
-                },
-              ]}
-              onPress={() => {
-                setTabActive(data);
-                setCourseType(data === "Learning Material" ? "Book" : data);
-              }}
-            >
-              <Text
-                style={{
-                  fontSize: 16,
-                  fontWeight: "bold",
-                  color: tabActive === data ? COLORS.main : COLORS.gray,
-                }}
-              >
-                {data}
-              </Text>
-            </TouchableOpacity>
-          ))}
+          {COURSE_TYPE.map((data, index) => {
+            if (router?.params?.course_id) {
+              if (tabActive === data) {
+                return (
+                  <TouchableOpacity
+                    key={index}
+                    style={[
+                      {
+                        padding: 10,
+                        borderBottomWidth: 2,
+                        borderColor: "transparent",
+                        borderColor: COLORS.main, // Use your desired active color
+                      },
+                    ]}
+                  >
+                    <Text
+                      style={{
+                        fontSize: 16,
+                        fontWeight: "bold",
+                        color: COLORS.main,
+                      }}
+                    >
+                      {data}
+                    </Text>
+                  </TouchableOpacity>
+                );
+              }
+            } else {
+              return (
+                <TouchableOpacity
+                  key={index}
+                  style={[
+                    {
+                      padding: 10,
+                      borderBottomWidth: 2,
+                      borderColor: "transparent",
+                    },
+                    tabActive === data && {
+                      borderColor: COLORS.main, // Use your desired active color
+                    },
+                  ]}
+                  onPress={() => {
+                    setTabActive(data);
+                    setCourseType(data === "Learning Material" ? "Book" : data);
+                  }}
+                >
+                  <Text
+                    style={{
+                      fontSize: 16,
+                      fontWeight: "bold",
+                      color: tabActive === data ? COLORS.main : COLORS.gray,
+                    }}
+                  >
+                    {data}
+                  </Text>
+                </TouchableOpacity>
+              );
+            }
+          })}
         </View>
         <Controller
           control={control}
@@ -526,9 +622,9 @@ export default function LearningCreate() {
                       transform: [{ translateY: -8 }],
                     },
                   }}
+                  items={LEVEL}
                   value={value}
                   onValueChange={onChange}
-                  items={LEVEL}
                   placeholder={{
                     label: "--Level--",
                     value: null,
@@ -539,7 +635,7 @@ export default function LearningCreate() {
           )}
           name="level"
           rules={{ required: true }}
-          defaultValue=""
+          defaultValue={watch("level")}
         />
         {errors?.level && (
           <Text style={styles.errorText}>This field is required</Text>
@@ -854,6 +950,26 @@ export default function LearningCreate() {
               setSelectedSkills={setSelectedCredentials}
               title="Credentials"
             />
+
+            <Controller
+              control={control}
+              render={({ field: { onChange, onBlur, value } }) => (
+                <View>
+                  <Text style={styles.label}>Unit</Text>
+                  <TextInput
+                    style={[
+                      styles.textarea,
+                      errors?.description && styles.inputError,
+                    ]}
+                    onBlur={onBlur}
+                    onChangeText={onChange}
+                    value={value}
+                    placeholder="eg. SKP"
+                  />
+                </View>
+              )}
+              name="unit"
+            />
           </>
         )}
         <TouchableOpacity
@@ -874,7 +990,7 @@ export default function LearningCreate() {
             </TouchableOpacity>
           ) : (
             <Image
-              source={{ uri: selectedImage?.uri }}
+              source={{ uri: selectedImage?.uri || watch("thumbnail_preview") }}
               style={{ width: 200, height: 200 }}
             />
           )}

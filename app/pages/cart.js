@@ -105,7 +105,7 @@ export default function MyCart() {
               style={{ width: 50, height: 50, borderRadius: 5 }}
             />
             <View>
-              <Text style={{ fontWeight: "700", flex: 1 }}>
+              <Text ellipsizeMode="clip" numberOfLines={2} style={{ fontWeight: "700", flex: 1 }}>
                 {cart?.ms_EnterpriseCourse?.title}
               </Text>
               <Text

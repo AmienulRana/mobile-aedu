@@ -20,9 +20,7 @@ export default function ContinueLearn() {
     continueLearning?.length > 0 && (
       <View style={styles.continueLearnContainer}>
         <Text style={styles.continueLearnTitle}>
-          {language === "EN"
-            ? "Continue Learning, Let's Go!"
-            : "Lanjut Belajar, Yuk!"}
+          {language === 'EN' ? 'Continue Learning' : 'Lanjut belajar'} 
         </Text>
         <FlatList
           showsHorizontalScrollIndicator={false}

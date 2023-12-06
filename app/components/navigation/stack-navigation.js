@@ -36,6 +36,9 @@ import AdvertiseCreate from "../../pages/enterprise/advertise-create";
 import TalentSearchCreate from "../../pages/enterprise/talent-search-create";
 import { useProfileContext } from "../../context/useProfileContext";
 import ListParticipantEnterprise from "../../pages/enterprise/list-parcipant";
+import MyTicket from "../../pages/my-ticket";
+import ReportPost from "../../pages/community/report-post";
+import Discover from "../../pages/discover";
 
 const Stack = createNativeStackNavigator();
 
@@ -45,8 +48,10 @@ export default function StackNavigation() {
   return (
     <NavigationContainer theme={{ colors: { background: "white" } }}>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="discover" component={Discover} />
         <Stack.Screen name="home" component={Home} />
         <Stack.Screen name="course-detail" component={CourseDetail} />
+        <Stack.Screen name="my-ticket" component={MyTicket} />
         <Stack.Screen name="profile" component={Profile} />
         <Stack.Screen name="my-course" component={MyCourse} />
         <Stack.Screen name="cart" component={MyCart} />
@@ -57,6 +62,7 @@ export default function StackNavigation() {
         <Stack.Screen name="community-network" component={CommunityMyNetwork} />
         <Stack.Screen name="community-profile" component={ProfileCommunity} />
         <Stack.Screen name="community-post" component={CommunityPost} />
+        <Stack.Screen name="community-post-report" component={ReportPost} />
         <Stack.Screen name="community-jobs" component={CommunityJobs} />
         <Stack.Screen
           name="community-notification"

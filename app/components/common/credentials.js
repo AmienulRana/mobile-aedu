@@ -56,7 +56,7 @@ export default function Credentials({
 
   const handleRemoveSkill = (item) => {
     setSelectedSkills((prevSkills) =>
-      prevSkills.filter((skill) => skill.id !== item.id)
+      prevSkills.filter((skill) => skill.id !== item.id || skill !== item)
     );
   };
 
@@ -161,7 +161,7 @@ export default function Credentials({
                   alignItems: "center",
                 }}
               >
-                <Text style={{ color: COLORS.main }}>{skill?.name}</Text>
+                <Text style={{ color: COLORS.main }}>{skill?.name || skill}</Text>
                 <FontAwesome name="remove" size={14} color={COLORS.red} />
               </TouchableOpacity>
             ))}

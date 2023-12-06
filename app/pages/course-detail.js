@@ -14,7 +14,7 @@ import {
 import React, { useEffect, useState } from "react";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import colors from "../components/shared/COLORS";
-import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
+import { Feather, Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import useFetch, { URL_API } from "../hooks/useFetch";
 import RenderHTML from "react-native-render-html";
 import InformationDetail, {
@@ -30,6 +30,7 @@ import Collapsible from "react-native-collapsible";
 import YoutubePlayer from "react-native-youtube-iframe";
 import FinishCourse from "../components/pages/detail-course/finish-course";
 import { useLanguageContext } from "../context/LanguageContext";
+import { Modal } from "react-native";
 
 const courses = [
   "Introduction",
@@ -407,36 +408,53 @@ export default function CourseDetail() {
                     averageRating(data?.course?.zms_CRatings) || 0
                   )} (${data?.course?.zms_CRatings?.length || 0})`}
                 />
+                {isMyCourse && data?.course?.learning_method === "Offline" ? (
+                  <TouchableOpacity
+                    onPress={() =>
+                      navigation.navigate("my-ticket", {
+                        course_id: router.params?.id,
+                      })
+                    }
+                    style={styles.btnCheckout}
+                  >
+                    <Text style={{ color: "white" }}>
+                      {language === "EN" ? "My Ticket" : "Tiket Saya"}
+                    </Text>
+                    <Feather name="book-open" size={20} color={"white"} />
+                  </TouchableOpacity>
+                ) : (
+                  <TouchableOpacity
+                    onPress={() => handleCheckoutPage()}
+                    style={styles.btnCheckout}
+                  >
+                    <Text style={{ color: "white" }}>
+                      {language === "EN" ? "Buy Now" : "Beli Sekarang"}
+                    </Text>
+                    <MaterialCommunityIcons
+                      name="cart-outline"
+                      size={20}
+                      color="white"
+                    />
+                  </TouchableOpacity>
+                )}
+                {!isMyCourse && (
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      justifyContent: "space-between",
+                      marginTop: 15,
+                      alignItems: "center",
+                    }}
+                  >
+                    <Text>
+                      {language === "EN" ? "Total Price" : "Total Harga"}
+                    </Text>
 
-                <TouchableOpacity
-                  onPress={() => handleCheckoutPage()}
-                  style={styles.btnCheckout}
-                >
-                  <Text style={{ color: "white" }}>
-                    {language === "EN" ? "Buy Now" : "Beli Sekarang"}
-                  </Text>
-                  <MaterialCommunityIcons
-                    name="cart-outline"
-                    size={20}
-                    color="white"
-                  />
-                </TouchableOpacity>
-                <View
-                  style={{
-                    flexDirection: "row",
-                    justifyContent: "space-between",
-                    marginTop: 15,
-                    alignItems: "center",
-                  }}
-                >
-                  <Text>
-                    {language === "EN" ? "Total Price" : "Total Harga"}
-                  </Text>
-
-                  <Text style={styles.price}>
-                    Rp{Number(data?.course?.price || 0).toLocaleString()}
-                  </Text>
-                </View>
+                    <Text style={styles.price}>
+                      Rp{Number(data?.course?.price || 0).toLocaleString()}
+                    </Text>
+                  </View>
+                )}
               </View>
             </View>
           </ScrollView>
@@ -445,6 +463,7 @@ export default function CourseDetail() {
     </View>
   );
 }
+
 
 const styles = StyleSheet.create({
   detailCourseWrapper: {
@@ -481,4 +500,5 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     backgroundColor: COLORS.main,
   },
+
 });

@@ -10,14 +10,15 @@ import {
   TextInput,
   Modal,
   Linking,
+  Alert,
 } from "react-native";
 import React, { useCallback, useEffect, useState } from "react";
 import PageHeader from "../../components/common/page-header";
 import COLORS from "../../components/shared/COLORS";
 import useFetch, { URL_API_COMM } from "../../hooks/useFetch";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import BottomMenuBarCommunity from "../../components/common/bottom-menu-community";
-import { AntDesign, FontAwesome } from "@expo/vector-icons";
+import { AntDesign, Entypo, FontAwesome, Ionicons } from "@expo/vector-icons";
 import { getTimeAgoString } from "../../components/utils/helper";
 import moment from "moment";
 import axios from "axios";
@@ -25,6 +26,8 @@ import AdsCard from "../../components/pages/community/post-card";
 import PageHeaderCommunity from "../../components/common/page-header-community";
 import { useProfileContext } from "../../context/useProfileContext";
 import { useLanguageContext } from "../../context/LanguageContext";
+import ReactNativeModal from "react-native-modal";
+import { ART, TECH } from "../../components/shared/DATA";
 
 export function Avatar({ name, size, textSize, imageUrl }) {
   return imageUrl ? (
@@ -54,6 +57,8 @@ export function Avatar({ name, size, textSize, imageUrl }) {
 export function PostCard({ post, isAdsPost }) {
   const [isLike, setIsLike] = useState(post?.is_like || false);
   const [showModal, setShowModal] = useState(false);
+  const [showOption, setShowOption] = useState(false);
+
   const [comment, setComment] = useState("");
   const [dataComment, setDataComment] = useState([]);
   const navigation = useNavigation();
@@ -81,6 +86,19 @@ export function PostCard({ post, isAdsPost }) {
       navigation.navigate("community-profile-detail", {
         user_id: user?.ms_User?.id,
       });
+    }
+  };
+
+  const handleDeletePost = async (id) => {
+    try {
+      await axios.get(`${URL_API_COMM}/comm/del_post/${id}`);
+      // mutate(`${URL_API_COMMUNITY}/comm/userPosts`);
+      Alert.alert('Success to delete post');
+      setShowOption(false);
+    } catch (error) {
+      setShowOption(false);
+      Alert.alert('Failed to delete post');
+      console.log(error);
     }
   };
 
@@ -115,8 +133,17 @@ export function PostCard({ post, isAdsPost }) {
     <View
       style={{
         marginBottom: 45,
+        position: "relative",
       }}
+      onBackdropPress={() => setShowOption(false)}
+      customBackdrop={<View style={{ margin: 0 }}></View>}
     >
+      <TouchableOpacity
+        onPress={() => setShowOption(!showOption)}
+        style={{ position: "absolute", top: 0, right: 0 }}
+      >
+        <Entypo name="dots-three-horizontal" size={24} color="black" />
+      </TouchableOpacity>
       {isAdsPost ? (
         <AdsCard post={post} />
       ) : (
@@ -169,10 +196,10 @@ export function PostCard({ post, isAdsPost }) {
                         `${post?.ms_User?.ms_Profile?.first_name} ${post?.ms_User?.ms_Profile?.last_name}` ||
                         "Annonymus"}
                     </Text>
+                    <Text style={{ color: COLORS.gray }}>
+                      {getTimeAgoString(post?.createdAt, language)}
+                    </Text>
                   </TouchableOpacity>
-                  <Text style={{ color: COLORS.gray }}>
-                    {getTimeAgoString(post?.createdAt, language)}
-                  </Text>
                 </View>
               </View>
             </View>
@@ -194,10 +221,10 @@ export function PostCard({ post, isAdsPost }) {
                     `${post?.ms_User?.ms_Profile?.first_name} ${post?.ms_User?.ms_Profile?.last_name}` ||
                     "Annonymus"}
                 </Text>
+                <Text style={{ color: COLORS.gray, fontSize: 12 }}>
+                  {getTimeAgoString(post?.createdAt, language)}
+                </Text>
               </TouchableOpacity>
-              <Text style={{ color: COLORS.gray }}>
-                {getTimeAgoString(post?.createdAt, language)}
-              </Text>
             </View>
           )}
           <View
@@ -384,6 +411,67 @@ export function PostCard({ post, isAdsPost }) {
           </TouchableOpacity>
         </View>
       </Modal>
+
+      <ReactNativeModal
+        backdropOpacity={0.3}
+        onBackButtonPress={() => setShowOption(false)}
+        style={{
+          flexDirection: "row",
+          alignItems: "flex-end",
+          padding: 0,
+          margin: 0,
+        }}
+        isVisible={showOption}
+        swipeDirection={["down"]}
+        onSwipeComplete={() => setShowOption(!showOption)}
+      >
+        <View
+          style={{
+            backgroundColor: "white",
+            height: 300,
+            width: "100%",
+            margin: 0,
+            paddingHorizontal: 20,
+          }}
+        >
+          <View style={{ alignItems: "center", marginBottom: 10, transform: [{translateY: -15}] }}>
+            <Ionicons name="remove-outline" size={54} color={COLORS.gray} />
+          </View>
+          {profileContext?.id === post?.uid ? (
+          <TouchableOpacity
+            onPress={() => handleDeletePost(post?.id)}
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              marginTop: 10,
+            }}
+          >
+            <FontAwesome name="trash" size={18} color={COLORS.red} />
+            <Text style={{ fontSize: 14, marginLeft: 8, color: COLORS.red }}>
+              {language === "EN" ? "Delete" : "Hapus"}
+            </Text>
+          </TouchableOpacity>
+          ) : (
+          <TouchableOpacity
+            onPress={() => {
+              setShowOption(false);
+              navigation.navigate('community-post-report', { post_id: post?.id}) 
+            }}
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              marginTop: 10,
+            }}
+          >
+            <FontAwesome name="flag" size={18} color={COLORS.gray} />
+            <Text style={{ fontSize: 14, marginLeft: 8, color: COLORS.gray }}>
+              {language === "EN" ? "Report" : "Laporkan"}
+            </Text>
+          </TouchableOpacity>
+
+          )}
+        </View>
+      </ReactNativeModal>
     </View>
   );
 }
@@ -399,6 +487,7 @@ export default function CommunityHome() {
   const { data, fetchData, isLoading } = useFetch("/comm/postAd", URL_API_COMM);
   const [showModal, setShowModal] = useState(false);
   const { language } = useLanguageContext();
+  const router = useRoute();
 
   const navigation = useNavigation();
 
@@ -411,6 +500,17 @@ export default function CommunityHome() {
     );
     setResultSearch(searchContent);
   };
+
+  const translateTypeCommunity = (type) => {
+    if(type === 'Health'){
+      return language === 'EN' ? 'Health' : 'Kesehatan'
+    }
+    else if(type === 'Tech'){
+      return language === 'EN' ? 'Technology' : 'Teknologi'
+    }else{
+      return language === 'EN' ? 'Art Design' : 'Art Desain'
+    }
+  }
 
   return isLoading ? (
     <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
@@ -427,6 +527,10 @@ export default function CommunityHome() {
         <PageHeaderCommunity />
 
         <View style={{ marginTop: 30 }}></View>
+
+        <Text style={{ marginBottom: 20,  fontWeight:'bold', fontSize: 18}}>
+         Global Feed {translateTypeCommunity(router?.params?.community_type)}
+          </Text>
         <TouchableOpacity
           onPress={() => setShowModal(true)}
           style={{
@@ -465,7 +569,14 @@ export default function CommunityHome() {
             </Text>
           </TouchableOpacity>
         </TouchableOpacity>
-        {data?.[0]?.map((post) => (
+        {router?.params?.community_type === 'Health' && data?.[0]?.map((post) => (
+          <PostCard key={post?.id} post={post} />
+          ))}
+
+        {router?.params?.community_type === 'Tech' && TECH?.map((post) => (
+          <PostCard key={post?.id} post={post} />
+        ))}
+        {router?.params?.community_type === 'Art' && ART?.map((post) => (
           <PostCard key={post?.id} post={post} />
         ))}
         {data?.[1]?.map((post, i) => (

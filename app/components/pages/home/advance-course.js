@@ -1,6 +1,6 @@
 import { StyleSheet, Text, View, Image, FlatList } from "react-native";
 import React, { useEffect, useState } from "react";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import { TouchableOpacity } from "react-native";
 import BadgeCourse from "../../common/badge-course";
 import COLORS from "../../shared/COLORS";
@@ -24,45 +24,59 @@ export default function AdvanceCourse({ courses }) {
   const [tabActive, setTabActive] = useState("Technology");
   const [dataCourse, setDataCourse] = useState(courses);
   const { language } = useLanguageContext();
+  const router = useRoute();
 
   const categoriesEN = [
-    "Technology",
     "Health",
+    "Technology",
     "Art Desain",
     "Learning Material",
   ];
   const categoriesID = [
-    "Teknologi",
     "Kesehatan",
+    "Teknologi",
     "Art Desain",
     "Material Pembelajaran",
   ];
 
   const handleFilterCourse = (tab) => {
-    setTabActive(tab);
-    if (tab === "Learning Material" || tab === "Material Pembelajaran") {
-      const filterMaterial = courses?.filter(
-        (course) => course?.course_type == "Book"
-      );
-      return setDataCourse(filterMaterial);
-    }
-    setDataCourse(courses);
+
+    const filteredCourses = courses?.filter((course) => {
+      if (tab === "Learning Material" || tab === "Material Pembelajaran") {
+        return course?.course_type === "Book";
+      } else if (tab === 'Health') {
+        return course?.course_cat_name === "Health";
+      } else if (tab === 'Tech') {
+        return course?.course_cat_name === "Tech";
+      } else if (tab === 'Art') {
+        return course?.course_cat_name === "Art";
+      }
+      return [];
+    });
+
+    console.log('handle filter func', courses);
+  
+    setDataCourse(filteredCourses || []);
   };
 
-  useEffect(() => {
-    setDataCourse(courses);
-  }, [courses]);
   useEffect(() => {
     setTabActive(language === "EN" ? categoriesEN[0] : categoriesID[0]);
   }, [language]);
 
+  useEffect(() => {
+      handleFilterCourse(router.params?.category);
+    // console.log('depen course', router?.params)
+  }, [courses])
+
+
   return (
     <View style={styles.advanceCourseContainer}>
       <Text style={styles.advanceCourseTitle}>
-        {language === "EN" ? "Course" : "Kursus"}
+        {/* {language === "EN" ? "Course" : "Kursus"} */}
+        Workshop
       </Text>
       <View style={{ paddingHorizontal: 5, paddingVertical: 15 }}>
-        <FlatList
+         {/* <FlatList
           showsHorizontalScrollIndicator={false}
           horizontal
           data={language === "EN" ? categoriesEN : categoriesID}
@@ -75,7 +89,7 @@ export default function AdvanceCourse({ courses }) {
             </TouchableOpacity>
           )}
           keyExtractor={(item) => item}
-        />
+        /> */}
         <FlatList
           showsHorizontalScrollIndicator={false}
           horizontal
@@ -116,6 +130,9 @@ export default function AdvanceCourse({ courses }) {
           keyExtractor={(image, index) => index.toString()}
         />
       </View>
+      {dataCourse?.length === 0 && (
+        <Text style={{textAlign:'center', marginTop:5}}>{language === 'EN' ?  "No courses / workshop found" : "Tidak ada kursus / workshop disini" }</Text>
+      )}
     </View>
   );
 }

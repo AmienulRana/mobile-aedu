@@ -49,6 +49,9 @@ export default function AdvertiseCreate() {
     "/enter/publishedCourses",
     URL_API_ENTER
   );
+  const { data: adsDetail, fetchData: fetchDetailAds } = useFetch(
+    `/enter/ad_detail/${router.params?.ads_id}`, URL_API_ENTER
+  );
 
   const [selectedImage, setSelectedImage] = useState({});
   const [imageFile, setImageFile] = useState(null);
@@ -65,13 +68,23 @@ export default function AdvertiseCreate() {
       fd.append("ad_desc", data.ad_desc);
       fd.append("web_url", data.web_url);
       fd.append("call_to_action", data.call_to_action);
-      const response = await axios.post(`${URL_API_ENTER}/enter/create_ad`, fd);
-      if (response.status === 200) {
-        navigation.push("enterprise-ads");
+      if (router?.params?.ads_id) {
+        const response=  await axios.put(
+          `${URL_API_ENTER}/enter/edit_ad/${router?.params?.ads_id}`,
+          fd
+        );
+        if (response.status === 200) {
+          navigation.push("enterprise-ads");
+        }
+      } else {
+        const response=  await axios.post(`${URL_API_ENTER}/enter/create_ad`, fd);
+        if (response.status === 200) {
+          navigation.push("enterprise-ads");
+        }
       }
     } catch (error) {
       console.log(error);
-      Alert.alert("Error", "failed to add Advertise!");
+      Alert.alert("Error", `failed to ${router?.params?.ads_id ? 'edit' : 'add'} Advertise!`);
     }
   };
 
@@ -103,6 +116,20 @@ export default function AdvertiseCreate() {
       });
     }
   };
+
+  useEffect(() => {
+    fetchDetailAds()
+  }, [router])
+  useEffect(() => {
+    setValue("primary_text", adsDetail?.primary_text);
+    setValue("call_to_action", adsDetail?.call_to_action);
+    setValue("headline", adsDetail?.headline);
+    setValue("ad_desc", adsDetail?.ad_desc);
+    setValue("ad_type", adsDetail?.ad_type);
+    setValue("course", adsDetail?.course);
+    setValue("web_url", adsDetail?.web_url);
+    console.log(adsDetail)
+  }, [adsDetail])
 
   return (
     <>

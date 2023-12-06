@@ -260,6 +260,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 16,
     fontWeight: "bold",
+    width:"95%"
   },
   completionContainer: {
     flexDirection: "row",

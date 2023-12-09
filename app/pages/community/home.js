@@ -27,7 +27,8 @@ import PageHeaderCommunity from "../../components/common/page-header-community";
 import { useProfileContext } from "../../context/useProfileContext";
 import { useLanguageContext } from "../../context/LanguageContext";
 import ReactNativeModal from "react-native-modal";
-import { ART, TECH } from "../../components/shared/DATA";
+import { ART, HEALTH, TECH } from "../../components/shared/DATA";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export function Avatar({ name, size, textSize, imageUrl }) {
   return imageUrl ? (
@@ -487,6 +488,9 @@ export default function CommunityHome() {
   const { data, fetchData, isLoading } = useFetch("/comm/postAd", URL_API_COMM);
   const [showModal, setShowModal] = useState(false);
   const { language } = useLanguageContext();
+
+  // Tech, Health,, Art
+  const [categoryMode, setCategoryMode] = useState('');
   const router = useRoute();
 
   const navigation = useNavigation();
@@ -512,6 +516,25 @@ export default function CommunityHome() {
     }
   }
 
+  const getData = async () => {
+    try {
+      const value = await AsyncStorage.getItem('category');
+      
+      if (value !== null) {
+        // value previously stored
+        setCategoryMode(value);
+        
+      }
+    } catch (e) {
+      // error reading value
+    }
+  };
+
+
+  useEffect(() => {
+    getData();
+  }, [])
+
   return isLoading ? (
     <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
       <Text>
@@ -529,7 +552,7 @@ export default function CommunityHome() {
         <View style={{ marginTop: 30 }}></View>
 
         <Text style={{ marginBottom: 20,  fontWeight:'bold', fontSize: 18}}>
-         Global Feed {translateTypeCommunity(router?.params?.community_type)}
+         Global Feed {translateTypeCommunity(categoryMode)}
           </Text>
         <TouchableOpacity
           onPress={() => setShowModal(true)}
@@ -569,14 +592,14 @@ export default function CommunityHome() {
             </Text>
           </TouchableOpacity>
         </TouchableOpacity>
-        {router?.params?.community_type === 'Health' && data?.[0]?.map((post) => (
+        {categoryMode === 'Health' && HEALTH.map((post) => (
           <PostCard key={post?.id} post={post} />
           ))}
 
-        {router?.params?.community_type === 'Tech' && TECH?.map((post) => (
+        {categoryMode === 'Tech' && TECH?.map((post) => (
           <PostCard key={post?.id} post={post} />
         ))}
-        {router?.params?.community_type === 'Art' && ART?.map((post) => (
+        {categoryMode === 'Art' && ART?.map((post) => (
           <PostCard key={post?.id} post={post} />
         ))}
         {data?.[1]?.map((post, i) => (

@@ -40,8 +40,16 @@ export default function Discover() {
     }
   };
 
+  const storeData = async (value) => {
+    try {
+      await AsyncStorage.setItem('category', value);
+    } catch (e) {
+      // saving error
+    }
+  };
   const handleNavigateHome = (category) => {
     navigation.navigate('home', {category});
+    storeData(category);
   }
 
   useEffect(() => {

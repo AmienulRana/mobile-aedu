@@ -82,16 +82,20 @@ export default function Home() {
           <Text style={{ fontWeight: 700, fontSize: 18 }}>
             {language === "EN"
               ? "Join our community"
-              : "Bergabung dengan komunitas kami"}
+              : "Lihat dan Jelajahi Pusat Komunitas"}
           </Text>
-          <Text style={{ marginTop: 20 }}>
+          <Image
+            source={require("../assets/community.png")}
+            style={styles.banner}
+          />
+          {/* <Text style={{ marginTop: 20 }}>
             {language === "EN"
               ? "Joining the a Community member is a great introduction to the quickly evolving and specialized field of online education. Membership is free and gives you the opportunity to expand your professional development by networking in worldwide."
               : "Bergabung dengan anggota Komunitas merupakan pengenalan yang bagus terhadap bidang pendidikan online yang berkembang pesat dan terspesialisasi. Keanggotaannya gratis dan memberi Anda kesempatan untuk mengembangkan pengembangan profesional Anda melalui jaringan di seluruh dunia."}
-          </Text>
+          </Text> */}
 
           <TouchableOpacity onPress={() => navigation.navigate('community-home', {community_type: router?.params?.category})} style={{backgroundColor: COLORS.main, marginTop: 20, paddingVertical: 8, borderRadius: 5,}}>
-            <Text style={{color:'white', textAlign:'center'}}>{language === 'EN' ? 'Community' : 'Komunitas'}</Text>
+            <Text style={{color:'white', textAlign:'center'}}>{language === 'EN' ? 'Join Now' : 'Jelajahi Sekarang'}</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>

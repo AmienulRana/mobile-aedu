@@ -45,8 +45,8 @@ export default function PageHeaderCommunity() {
 
   useEffect(() => {
     if (isError) {
-      navigation.navigate("login");
-      AsyncStorage.removeItem("login-mode");
+      // navigation.navigate("login");
+      // AsyncStorage.removeItem("login-mode");
     }
   }, [isError]);
 
@@ -62,7 +62,7 @@ export default function PageHeaderCommunity() {
               ellipsizeMode="tail"
             >
               {!cookie?.enterprise
-                ? `${cookie?.ms_Profile?.first_name} ${cookie?.ms_Profile?.last_name}`
+                ? `${cookie?.ms_Profile?.first_name || 'There'} ${cookie?.ms_Profile?.last_name || ''}`
                 : `${cookie?.ms_EnterpriseProfile?.business_name || "There"}`}
             </Text>
           )}

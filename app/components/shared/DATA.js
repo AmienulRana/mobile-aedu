@@ -324,3 +324,312 @@ export const ART = [
       
       
 ]
+
+export const HEALTH = [
+  {
+    id: "59f7383c704df4082f0f30c312027427",
+    post: "Selamat pagi, para orang tua yang peduli pada kesehatan anak!\r\n\r\n jangan lupa anak-anak nya di vaksin ya 👶🌞.",
+    uid: 14,
+    for_group: null,
+    is_like: true,
+    is_comment: true,
+    attachments: null,
+    tags: null,
+    createdAt: "2023-11-20T07:17:38.000Z",
+    updatedAt: "2023-11-20T07:17:38.000Z",
+    ms_CommGroup: null,
+    tmp_PostReports: [
+      {
+        id: "f42eb197-3a8b-4451-abd2-4eb1095d3079",
+        ms_User: {
+          id: 2,
+        },
+      },
+      {
+        id: "79a7a9ef-bea9-417c-8e2b-bdad20e55a33",
+        ms_User: {
+          id: 2,
+        },
+      },
+    ],
+    ms_User: {
+      id: 14,
+      ms_Profile: {
+        virtual_pp: "https://communityhubapi.aedu.id/comm/get_ava/14",
+        first_name: "Dr. Wagito",
+        last_name: "SpA",
+        avatar: "14-pp.jpeg",
+        user_ref: 14,
+      },
+      ms_EnterpriseProfile: null,
+    },
+    ms_PostLikes: [
+      {
+        id: "b87046fc-06ba-48be-ad4a-f08ce1af18eb",
+        post_id: "59f7383c704df4082f0f30c312027427",
+        uid: 18,
+        createdAt: "2023-11-28T03:04:52.000Z",
+        updatedAt: "2023-11-28T03:04:52.000Z",
+        ms_User: {
+          id: 18,
+          ms_Profile: {
+            virtual_pp: null,
+            first_name: "gawigav813",
+            last_name: "1701135792444",
+            avatar: null,
+            user_ref: 18,
+          },
+          ms_EnterpriseProfile: null,
+        },
+        Liked: null,
+      },
+      {
+        id: "ae6290b6-b12f-4e60-ab18-59c552603d3b",
+        post_id: "59f7383c704df4082f0f30c312027427",
+        uid: 18,
+        createdAt: "2023-11-28T03:04:55.000Z",
+        updatedAt: "2023-11-28T03:04:55.000Z",
+        ms_User: {
+          id: 18,
+          ms_Profile: {
+            virtual_pp: null,
+            first_name: "gawigav813",
+            last_name: "1701135792444",
+            avatar: null,
+            user_ref: 18,
+          },
+          ms_EnterpriseProfile: null,
+        },
+        Liked: null,
+      },
+      {
+        id: "0f138908-8a70-4147-8c3d-00b85f3a5721",
+        post_id: "59f7383c704df4082f0f30c312027427",
+        uid: 18,
+        createdAt: "2023-11-28T03:04:56.000Z",
+        updatedAt: "2023-11-28T03:04:56.000Z",
+        ms_User: {
+          id: 18,
+          ms_Profile: {
+            virtual_pp: null,
+            first_name: "gawigav813",
+            last_name: "1701135792444",
+            avatar: null,
+            user_ref: 18,
+          },
+          ms_EnterpriseProfile: null,
+        },
+        Liked: null,
+      },
+      {
+        id: "4d85c27c-5e64-4cc1-9577-e0e5aa09a6b6",
+        post_id: "59f7383c704df4082f0f30c312027427",
+        uid: 18,
+        createdAt: "2023-11-28T03:04:56.000Z",
+        updatedAt: "2023-11-28T03:04:56.000Z",
+        ms_User: {
+          id: 18,
+          ms_Profile: {
+            virtual_pp: null,
+            first_name: "gawigav813",
+            last_name: "1701135792444",
+            avatar: null,
+            user_ref: 18,
+          },
+          ms_EnterpriseProfile: null,
+        },
+        Liked: null,
+      },
+    ],
+    ms_PostComments: [],
+  },
+  {
+    id: "fac7726f852514e86159d1785ef56e5b",
+    post: "Hari ini, kita bahas beberapa cara menjaga kesehatan mata sehari-hari.\r\n1.Istirahat untuk Mata, 2. Pentingnya Pemeriksaan Mata Rutin, 3. Tips untuk Pemakaian Kacamata atau Lensa Kontak! 👓💙\r\n\r\n#EyeHealth #VisionCare #OptometryTips",
+    uid: 16,
+    for_group: null,
+    is_like: true,
+    is_comment: true,
+    attachments: null,
+    tags: null,
+    createdAt: "2023-11-20T07:13:46.000Z",
+    updatedAt: "2023-11-20T07:13:46.000Z",
+    ms_CommGroup: null,
+    tmp_PostReports: [],
+    ms_User: {
+      id: 16,
+      ms_Profile: {
+        virtual_pp: "https://communityhubapi.aedu.id/comm/get_ava/16",
+        first_name: "dr. Michael Je, ",
+        last_name: "Sp.M",
+        avatar: "16-pp.jpeg",
+        user_ref: 16,
+      },
+      ms_EnterpriseProfile: null,
+    },
+    ms_PostLikes: [
+      {
+        id: "575f453e-0508-4d7a-ae4f-ff98a63b96fb",
+        post_id: "fac7726f852514e86159d1785ef56e5b",
+        uid: 2,
+        createdAt: "2023-11-24T18:35:21.000Z",
+        updatedAt: "2023-11-24T18:35:21.000Z",
+        ms_User: {
+          id: 2,
+          ms_Profile: {
+            virtual_pp: "https://communityhubapi.aedu.id/comm/get_ava/2",
+            first_name: "Dr. Djamin  Kartarino,",
+            last_name: "SpOG",
+            avatar: "2-pp.jpeg",
+            user_ref: 2,
+          },
+          ms_EnterpriseProfile: null,
+        },
+        Liked: {
+          id: 2,
+        },
+      },
+      {
+        id: "3347529c-d6ec-44fb-be36-775794d6274c",
+        post_id: "fac7726f852514e86159d1785ef56e5b",
+        uid: 2,
+        createdAt: "2023-11-24T18:36:59.000Z",
+        updatedAt: "2023-11-24T18:36:59.000Z",
+        ms_User: {
+          id: 2,
+          ms_Profile: {
+            virtual_pp: "https://communityhubapi.aedu.id/comm/get_ava/2",
+            first_name: "Dr. Djamin  Kartarino,",
+            last_name: "SpOG",
+            avatar: "2-pp.jpeg",
+            user_ref: 2,
+          },
+          ms_EnterpriseProfile: null,
+        },
+        Liked: {
+          id: 2,
+        },
+      },
+    ],
+    ms_PostComments: [
+      {
+        comment: "terimakasih dok penjelasan nya",
+        ms_User: {
+          id: 2,
+          ms_Profile: {
+            virtual_pp: "https://communityhubapi.aedu.id/comm/get_ava/2",
+            first_name: "Dr. Djamin  Kartarino,",
+            last_name: "SpOG",
+            avatar: "2-pp.jpeg",
+            user_ref: 2,
+          },
+          ms_EnterpriseProfile: null,
+        },
+        u_comment: {
+          id: 2,
+          ms_Profile: {
+            virtual_pp: "https://communityhubapi.aedu.id/comm/get_ava/2",
+            first_name: "Dr. Djamin  Kartarino,",
+            last_name: "SpOG",
+            avatar: "2-pp.jpeg",
+            user_ref: 2,
+          },
+          ms_EnterpriseProfile: null,
+        },
+      },
+    ],
+  },
+  {
+    id: "e4e9c68cb175d9754c897d59fc55b389",
+    post: "Ingatlah bahwa tubuh sehat adalah kunci untuk mencapai potensi penuh dalam kehidupan sehari-hari.\r\n\r\nberikut adalah beberapa cara agar kita bisa menjalankan kehidupan yang sehat\r\n\r\n1. Nutrisi yang Seimbang:\r\n   Sebagai dasar kesehatan, pastikan Anda mendapatkan nutrisi yang seimbang setiap hari.\r\n\r\n2.  Aktivitas Fisik:\r\nTak perlu olahraga berat, tetapi pastikan Anda mendapatkan aktivitas fisik cukup setiap hari.\r\n\r\n #WellnessJourney #SelfCare",
+    uid: 16,
+    for_group: null,
+    is_like: true,
+    is_comment: true,
+    attachments: "https://communityhubapi.aedu.id/pf/16-1700296879766.jpeg",
+    tags: null,
+    createdAt: "2023-11-18T08:41:19.000Z",
+    updatedAt: "2023-11-18T08:41:19.000Z",
+    ms_CommGroup: null,
+    tmp_PostReports: [
+      {
+        id: "071d29f0-ca62-4104-8131-4d0dd93aa920",
+        ms_User: {
+          id: 2,
+        },
+      },
+    ],
+    ms_User: {
+      id: 16,
+      ms_Profile: {
+        virtual_pp: "https://communityhubapi.aedu.id/comm/get_ava/16",
+        first_name: "dr. Michael Je, ",
+        last_name: "Sp.M",
+        avatar: "16-pp.jpeg",
+        user_ref: 16,
+      },
+      ms_EnterpriseProfile: null,
+    },
+    ms_PostLikes: [],
+    ms_PostComments: [
+      {
+        comment:
+          "Terima kasih kepada semua yang berbagi tips dan pengalaman. Mari kita lanjutkan perjalanan sehat ini bersama-sama. 🌿💕 #HealthyCommunity",
+        ms_User: {
+          id: 4,
+          ms_Profile: {
+            virtual_pp: "https://communityhubapi.aedu.id/comm/get_ava/4",
+            first_name: "Aminul",
+            last_name: "Rana",
+            avatar: "4-pp.jpeg",
+            user_ref: 4,
+          },
+          ms_EnterpriseProfile: null,
+        },
+        u_comment: null,
+      },
+      {
+        comment: "gimana ada yang setuju  gak nih?",
+        ms_User: {
+          id: 16,
+          ms_Profile: {
+            virtual_pp: "https://communityhubapi.aedu.id/comm/get_ava/16",
+            first_name: "dr. Michael Je, ",
+            last_name: "Sp.M",
+            avatar: "16-pp.jpeg",
+            user_ref: 16,
+          },
+          ms_EnterpriseProfile: null,
+        },
+        u_comment: null,
+      },
+    ],
+  },
+  // {
+  //   id: "3fc85f05a51bc5258ceeecbf54228912",
+  //   post: "Hari ini kita akan membahas pentingnya menjaga kesehatan tubuh kita. Ingatlah bahwa tubuh sehat adalah kunci untuk mencapai potensi penuh dalam kehidupan sehari-hari.",
+  //   uid: 2,
+  //   for_group: null,
+  //   is_like: false,
+  //   is_comment: false,
+  //   attachments: "https://communityhubapi.aedu.id/pf/2-1700242209675.jpeg",
+  //   tags: null,
+  //   createdAt: "2023-11-17T17:30:09.000Z",
+  //   updatedAt: "2023-11-17T17:30:09.000Z",
+  //   ms_CommGroup: null,
+  //   tmp_PostReports: [],
+  //   ms_User: {
+  //     id: 2,
+  //     ms_Profile: {
+  //       virtual_pp: "https://communityhubapi.aedu.id/comm/get_ava/2",
+  //       first_name: "Dr. Djamin  Kartarino,",
+  //       last_name: "SpOG",
+  //       avatar: "2-pp.jpeg",
+  //       user_ref: 2,
+  //     },
+  //     ms_EnterpriseProfile: null,
+  //   },
+  //   ms_PostLikes: [],
+  //   ms_PostComments: [],
+  // },
+];

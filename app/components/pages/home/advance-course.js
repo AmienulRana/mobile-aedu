@@ -72,8 +72,7 @@ export default function AdvanceCourse({ courses }) {
   return (
     <View style={styles.advanceCourseContainer}>
       <Text style={styles.advanceCourseTitle}>
-        {/* {language === "EN" ? "Course" : "Kursus"} */}
-        Workshop
+        {language === "EN" ? "Learn Now" : "Belajar Sekarang"}
       </Text>
       <View style={{ paddingHorizontal: 5, paddingVertical: 15 }}>
          {/* <FlatList

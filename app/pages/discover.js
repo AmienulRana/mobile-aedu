@@ -48,7 +48,7 @@ export default function Discover() {
     }
   };
   const handleNavigateHome = (category) => {
-    navigation.navigate('home', {category});
+    navigation.push('home', {category});
     storeData(category);
   }
 
@@ -216,10 +216,17 @@ const styles = StyleSheet.create({
     shadowRadius: 3, // Radius bayangan
     width: 200,
   },
+  contentLessionCourse: {
+    marginHorizontal: 15,
+    marginBottom: 10,
+  },
   advanceCourseImage: {
     width: 200,
     height: 117,
     marginBottom: 10,
+    borderWidth: 2,
+    borderColor: COLORS.main,
+    borderRadius: 5,
   },
   contentTitleCourse: {
     fontSize: 16,

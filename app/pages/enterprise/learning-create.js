@@ -369,7 +369,7 @@ export default function LearningCreate() {
               marginTop: 6,
             }}
           >
-            The initial learning page is crucial for your success at Aedu.
+            The initial learning page is crucial for your success at aedu .
             Consider creating a captivating Learning Homepage that showcases why
             someone would want to enroll in your Learning.
           </Text>

@@ -94,11 +94,11 @@ export function PostCard({ post, isAdsPost }) {
     try {
       await axios.get(`${URL_API_COMM}/comm/del_post/${id}`);
       // mutate(`${URL_API_COMMUNITY}/comm/userPosts`);
-      Alert.alert('Success to delete post');
+      Alert.alert("Success to delete post");
       setShowOption(false);
     } catch (error) {
       setShowOption(false);
-      Alert.alert('Failed to delete post');
+      Alert.alert("Failed to delete post");
       console.log(error);
     }
   };
@@ -133,17 +133,21 @@ export function PostCard({ post, isAdsPost }) {
   return (
     <View
       style={{
-        marginBottom: 45,
+        marginTop: 10,
         position: "relative",
+        backgroundColor: "white",
+        padding: 15,
+        borderRadius: 5,
+        marginBottom: 5,
       }}
       onBackdropPress={() => setShowOption(false)}
       customBackdrop={<View style={{ margin: 0 }}></View>}
     >
       <TouchableOpacity
         onPress={() => setShowOption(!showOption)}
-        style={{ position: "absolute", top: 0, right: 0 }}
+        style={{ position: "absolute", top: 15, right: 15 }}
       >
-        <Entypo name="dots-three-horizontal" size={24} color="black" />
+        <Entypo name="dots-three-horizontal" size={20} color="black" />
       </TouchableOpacity>
       {isAdsPost ? (
         <AdsCard post={post} />
@@ -435,41 +439,48 @@ export function PostCard({ post, isAdsPost }) {
             paddingHorizontal: 20,
           }}
         >
-          <View style={{ alignItems: "center", marginBottom: 10, transform: [{translateY: -15}] }}>
+          <View
+            style={{
+              alignItems: "center",
+              marginBottom: 10,
+              transform: [{ translateY: -15 }],
+            }}
+          >
             <Ionicons name="remove-outline" size={54} color={COLORS.gray} />
           </View>
           {profileContext?.id === post?.uid ? (
-          <TouchableOpacity
-            onPress={() => handleDeletePost(post?.id)}
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              marginTop: 10,
-            }}
-          >
-            <FontAwesome name="trash" size={18} color={COLORS.red} />
-            <Text style={{ fontSize: 14, marginLeft: 8, color: COLORS.red }}>
-              {language === "EN" ? "Delete" : "Hapus"}
-            </Text>
-          </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => handleDeletePost(post?.id)}
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                marginTop: 10,
+              }}
+            >
+              <FontAwesome name="trash" size={18} color={COLORS.red} />
+              <Text style={{ fontSize: 14, marginLeft: 8, color: COLORS.red }}>
+                {language === "EN" ? "Delete" : "Hapus"}
+              </Text>
+            </TouchableOpacity>
           ) : (
-          <TouchableOpacity
-            onPress={() => {
-              setShowOption(false);
-              navigation.navigate('community-post-report', { post_id: post?.id}) 
-            }}
-            style={{
-              flexDirection: "row",
-              alignItems: "center",
-              marginTop: 10,
-            }}
-          >
-            <FontAwesome name="flag" size={18} color={COLORS.gray} />
-            <Text style={{ fontSize: 14, marginLeft: 8, color: COLORS.gray }}>
-              {language === "EN" ? "Report" : "Laporkan"}
-            </Text>
-          </TouchableOpacity>
-
+            <TouchableOpacity
+              onPress={() => {
+                setShowOption(false);
+                navigation.navigate("community-post-report", {
+                  post_id: post?.id,
+                });
+              }}
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                marginTop: 10,
+              }}
+            >
+              <FontAwesome name="flag" size={18} color={COLORS.gray} />
+              <Text style={{ fontSize: 14, marginLeft: 8, color: COLORS.gray }}>
+                {language === "EN" ? "Report" : "Laporkan"}
+              </Text>
+            </TouchableOpacity>
           )}
         </View>
       </ReactNativeModal>
@@ -490,7 +501,7 @@ export default function CommunityHome() {
   const { language } = useLanguageContext();
 
   // Tech, Health,, Art
-  const [categoryMode, setCategoryMode] = useState('');
+  const [categoryMode, setCategoryMode] = useState("");
   const router = useRoute();
 
   const navigation = useNavigation();
@@ -506,34 +517,31 @@ export default function CommunityHome() {
   };
 
   const translateTypeCommunity = (type) => {
-    if(type === 'Health'){
-      return language === 'EN' ? 'Health' : 'Kesehatan'
+    if (type === "Health") {
+      return language === "EN" ? "Health" : "Kesehatan";
+    } else if (type === "Tech") {
+      return language === "EN" ? "Technology" : "Teknologi";
+    } else {
+      return language === "EN" ? "Art Design" : "Art Desain";
     }
-    else if(type === 'Tech'){
-      return language === 'EN' ? 'Technology' : 'Teknologi'
-    }else{
-      return language === 'EN' ? 'Art Design' : 'Art Desain'
-    }
-  }
+  };
 
   const getData = async () => {
     try {
-      const value = await AsyncStorage.getItem('category');
-      
+      const value = await AsyncStorage.getItem("category");
+
       if (value !== null) {
         // value previously stored
         setCategoryMode(value);
-        
       }
     } catch (e) {
       // error reading value
     }
   };
 
-
   useEffect(() => {
     getData();
-  }, [])
+  }, []);
 
   return isLoading ? (
     <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
@@ -546,65 +554,78 @@ export default function CommunityHome() {
   ) : (
     <>
       <StatusBar style={{ backgroundColor: "white" }} />
-      <ScrollView showsVerticalScrollIndicator={false} style={styles.container}>
-        <PageHeaderCommunity />
-
-        <View style={{ marginTop: 30 }}></View>
-
-        <Text style={{ marginBottom: 20,  fontWeight:'bold', fontSize: 18}}>
-         Global Feed {translateTypeCommunity(categoryMode)}
-          </Text>
-        <TouchableOpacity
-          onPress={() => setShowModal(true)}
+      <ScrollView showsVerticalScrollIndicator={false}>
+        <View style={styles.container}>
+          <PageHeaderCommunity />
+        </View>
+        <View
           style={{
-            flexDirection: "row",
-            gap: 10,
-            marginBottom: 30,
-            alignItems: "center",
+            paddingTop: 10,
+            backgroundColor: "#f4f2ee91",
+            paddingHorizontal: 10,
           }}
         >
-          <TextInput
-            placeholder={
-              language === "EN"
-                ? "Search by Title Job, Skill, Or Username"
-                : "Cari berdasarkan Judul Pekerjaan, Keahlian, atau Nama Pengguna"
-            }
-            style={{
-              flex: 1,
-              borderWidth: 1,
-              borderRadius: 100,
-              paddingHorizontal: 10,
-              paddingVertical: 5,
-            }}
-            editable={false}
-          />
-          <TouchableOpacity
-            onPress={() => setShowModal(true)}
-            style={{
-              backgroundColor: COLORS.main,
-              borderRadius: 100,
-              width: 80,
-              paddingVertical: 10,
-            }}
-          >
-            <Text style={{ color: "white", textAlign: "center" }}>
-              {language === "EN" ? "Search" : "Cari"}
+          <View style={{backgroundColor:"white", padding: 15, borderRadius: 5 }}>
+            <Text
+              style={{
+                marginBottom: 20,
+                marginTop: 10,
+                fontWeight: "bold",
+                fontSize: 18,
+              }}
+            >
+              Global Timeline {translateTypeCommunity(categoryMode)}
             </Text>
-          </TouchableOpacity>
-        </TouchableOpacity>
-        {categoryMode === 'Health' && HEALTH.map((post) => (
-          <PostCard key={post?.id} post={post} />
-          ))}
+            <TouchableOpacity
+              onPress={() => setShowModal(true)}
+              style={{
+                flexDirection: "row",
+                gap: 10,
+                marginBottom: 0,
+                alignItems: "center",
+              }}
+            >
+              <TextInput
+                placeholder={
+                  language === "EN"
+                    ? "Search by Title Job, Skill, Or Username"
+                    : "Cari berdasarkan Judul Pekerjaan, Keahlian, atau Nama Pengguna"
+                }
+                style={{
+                  flex: 1,
+                  borderWidth: 1,
+                  borderRadius: 100,
+                  paddingHorizontal: 10,
+                  paddingVertical: 5,
+                }}
+                editable={false}
+              />
+              <TouchableOpacity
+                onPress={() => setShowModal(true)}
+                style={{
+                  backgroundColor: COLORS.main,
+                  borderRadius: 100,
+                  width: 80,
+                  paddingVertical: 10,
+                }}
+              >
+                <Text style={{ color: "white", textAlign: "center" }}>
+                  {language === "EN" ? "Search" : "Cari"}
+                </Text>
+              </TouchableOpacity>
+            </TouchableOpacity>
+          </View>
+          {categoryMode === "Health" &&
+            HEALTH.map((post) => <PostCard key={post?.id} post={post} />)}
 
-        {categoryMode === 'Tech' && TECH?.map((post) => (
-          <PostCard key={post?.id} post={post} />
-        ))}
-        {categoryMode === 'Art' && ART?.map((post) => (
-          <PostCard key={post?.id} post={post} />
-        ))}
-        {data?.[1]?.map((post, i) => (
-          <PostCard key={post?.id} post={post} isAdsPost />
-        ))}
+          {categoryMode === "Tech" &&
+            TECH?.map((post) => <PostCard key={post?.id} post={post} />)}
+          {categoryMode === "Art" &&
+            ART?.map((post) => <PostCard key={post?.id} post={post} />)}
+          {data?.[1]?.map((post, i) => (
+            <PostCard key={post?.id} post={post} isAdsPost />
+          ))}
+        </View>
       </ScrollView>
       <Modal
         visible={showModal}
@@ -690,5 +711,6 @@ const styles = StyleSheet.create({
   container: {
     paddingHorizontal: 25,
     position: "relative",
+    paddingBottom: 15,
   },
 });

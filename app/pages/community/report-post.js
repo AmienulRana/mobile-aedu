@@ -77,7 +77,7 @@ export default function ReportPost() {
           <Text style={styles.description}>
             {language === "EN"
               ? "Flagging a post will notify aedu team who will take appropriate action."
-              : "Laporkan postingan ini akan memberi tau tim Aedu yang akan mengambil tindakan yang sesuai."}
+              : "Laporkan postingan ini akan memberi tau tim aedu  yang akan mengambil tindakan yang sesuai."}
           </Text>
           {reportReason.map((reason, i) => (
             <TouchableOpacity

@@ -40,22 +40,21 @@ export default function AdvanceCourse({ courses }) {
   ];
 
   const handleFilterCourse = (tab) => {
-
     const filteredCourses = courses?.filter((course) => {
       if (tab === "Learning Material" || tab === "Material Pembelajaran") {
         return course?.course_type === "Book";
-      } else if (tab === 'Health') {
+      } else if (tab === "Health") {
         return course?.course_cat_name === "Health";
-      } else if (tab === 'Tech') {
+      } else if (tab === "Tech") {
         return course?.course_cat_name === "Tech";
-      } else if (tab === 'Art') {
+      } else if (tab === "Art") {
         return course?.course_cat_name === "Art";
       }
       return [];
     });
 
-    console.log('handle filter func', courses);
-  
+    console.log("handle filter func", courses);
+
     setDataCourse(filteredCourses || []);
   };
 
@@ -64,10 +63,9 @@ export default function AdvanceCourse({ courses }) {
   }, [language]);
 
   useEffect(() => {
-      handleFilterCourse(router.params?.category);
+    handleFilterCourse(router.params?.category);
     // console.log('depen course', router?.params)
-  }, [courses])
-
+  }, [courses]);
 
   return (
     <View style={styles.advanceCourseContainer}>
@@ -75,7 +73,7 @@ export default function AdvanceCourse({ courses }) {
         {language === "EN" ? "Learn Now" : "Belajar Sekarang"}
       </Text>
       <View style={{ paddingHorizontal: 5, paddingVertical: 15 }}>
-         {/* <FlatList
+        {/* <FlatList
           showsHorizontalScrollIndicator={false}
           horizontal
           data={language === "EN" ? categoriesEN : categoriesID}
@@ -130,7 +128,11 @@ export default function AdvanceCourse({ courses }) {
         />
       </View>
       {dataCourse?.length === 0 && (
-        <Text style={{textAlign:'center', marginTop:5}}>{language === 'EN' ?  "No courses / workshop found" : "Tidak ada kursus / workshop disini" }</Text>
+        <Text style={{ textAlign: "center", marginTop: 5 }}>
+          {language === "EN"
+            ? "No courses / workshop found"
+            : "Tidak ada kursus / workshop disini"}
+        </Text>
       )}
     </View>
   );
@@ -162,6 +164,9 @@ const styles = StyleSheet.create({
     width: 200,
     height: 117,
     marginBottom: 10,
+    borderWidth: 2,
+    borderColor: COLORS.main,
+    borderRadius: 5,
   },
   contentTitleCourse: {
     fontSize: 16,

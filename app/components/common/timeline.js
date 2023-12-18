@@ -1,40 +1,60 @@
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import React from "react";
 import COLORS from "../shared/COLORS";
+import { FontAwesome, FontAwesome5 } from "@expo/vector-icons";
 
-export default function Timeline({ data }) {
+export default function Timeline({ title, subTitle, description, ortherText, date, onPressIcon, onDelete }) {
   return (
     <View style={styles.timelineContainer}>
-      {data?.map((entry, index) => (
-        <View key={index} style={styles.timelineEntry}>
+        <View style={styles.timelineEntry}>
           <View style={styles.timelineBullet} />
           <View style={styles.timelineContent}>
-            <Text style={styles.timelineTitle}>{entry.title}</Text>
-            {entry?.subTitle && (
-              <Text style={{ color: COLORS.gray }}>{entry.subTitle}</Text>
+            <View
+              style={{
+                flexDirection: "row",
+                justifyContent: "space-between",
+                alignItems: "center",
+              }}
+            >
+              <Text style={styles.timelineTitle}>{title}</Text>
+              <View style={{flexDirection: 'row', gap: 15, alignItems:'center'}}>
+              <TouchableOpacity
+                onPress={onPressIcon}
+              >
+                <FontAwesome5 name="pencil-alt" size={15} color="black" />
+              </TouchableOpacity>
+              <TouchableOpacity
+                onPress={onDelete}
+              >
+                <FontAwesome name="trash" size={20} color={COLORS.red} />
+              </TouchableOpacity>
+            </View>
+
+              </View>
+            {subTitle && (
+              <Text style={{ color: COLORS.gray }}>{subTitle}</Text>
             )}
-            {entry?.date && (
-              <Text style={{ color: COLORS.gray }}>{entry.date}</Text>
+            {date && (
+              <Text style={{ color: COLORS.gray }}>{date}</Text>
             )}
-            {entry?.ortherText && (
-              <Text style={{ color: COLORS.gray }}>{entry.ortherText}</Text>
+            {ortherText && (
+              <Text style={{ color: COLORS.gray }}>{ortherText}</Text>
             )}
-            {entry?.description && (
+            {description && (
               <Text style={styles.timelineDescription}>
-                {entry.description}
+                {description}
               </Text>
             )}
           </View>
         </View>
-      ))}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   timelineContainer: {
-    flex: 1,
-    marginBottom: 16,
+    // flex: 1,
+    // marginBottom: 16,
   },
   timelineEntry: {
     flexDirection: "row",

@@ -47,7 +47,7 @@ const BottomMenuBar = () => {
   return !isKeyboardVisible ? (
     <View style={styles.menuBar}>
       <TouchableOpacity
-        onPress={() => navigation.navigate(router?.name === 'discover' ? "discover" : router?.name === 'home' ? "discover" : "discover")}
+        onPress={() => navigation.push(router?.name === 'discover' ? "discover" : router?.name === 'home' ? "discover" : "discover")}
         style={styles.menuItem}
       >
         <Ionicons
@@ -88,7 +88,7 @@ const BottomMenuBar = () => {
         />
       </TouchableOpacity>
       <TouchableOpacity
-        onPress={() => navigation.navigate("profile")}
+        onPress={() => navigation.push("profile")}
         style={styles.menuItem}
       >
         <FontAwesome

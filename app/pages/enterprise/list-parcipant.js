@@ -358,7 +358,7 @@ export default function ListParticipantEnterprise() {
                     onPress={() => {
                       Alert.alert(
                         "Confirmation",
-                        "by clicking OK the user will automatically finish this course, and will get credentials and certificates from Aedu+ ",
+                        "by clicking OK the user will automatically finish this course, and will get credentials and certificates from aedu + ",
                         [
                           {
                             text: "Cancel",

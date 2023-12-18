@@ -23,3 +23,15 @@ export function getTimeAgoString(createdAt, language) {
     return `${diffDays} ${language === "EN" ? "days ago" : "hari yang lalu"}`;
   }
 }
+
+
+export function arrayYears(){
+  const currentYear = new Date().getFullYear();
+const yearsArray = Array.from({ length: currentYear - 1989 }, (_, index) => currentYear - index);
+
+const yearsObjectArray = yearsArray.map(year => ({
+  label: year.toString(),
+  value: year.toString(),
+}));
+return yearsObjectArray
+}

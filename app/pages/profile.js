@@ -32,11 +32,15 @@ import axios from "axios";
 import { useNavigation } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useLanguageContext } from "../context/LanguageContext";
+import DateTimePicker from "@react-native-community/datetimepicker";
+import { useProfileContext } from "../context/useProfileContext";
 
 export default function Profile() {
   const { data: token } = useFetch("/getToken");
-  const { data: experienceData } = useFetch("/get_exp");
-  const { data: educationData } = useFetch("/get_edu");
+  const { data: experienceData, fetchData: fetchExperience } =
+    useFetch("/get_exp");
+  const { data: educationData, fetchData: fetchEducation } =
+    useFetch("/get_edu");
   const {
     data: userProfile,
     fetchData: fetchUserProfile,
@@ -45,6 +49,7 @@ export default function Profile() {
   const { data: certificate, fetchData: fetchCertificate } = useFetch(
     `/ext_certs/${userProfile?.profile?.user_ref}`
   );
+  
 
   const [experienceTimeline, setExperienceTimeline] = useState([]);
   const [educationTimeline, setEducationTimeline] = useState([]);
@@ -53,8 +58,49 @@ export default function Profile() {
   const [refreshing, setRefreshing] = React.useState(false);
   const navigation = useNavigation();
   const { language } = useLanguageContext();
+  const { profileContext } = useProfileContext();
+
+
+  const { data: journal, fetchData: fetchJournal } = useFetch(
+    `/sciworks/2`
+  );
+  
 
   const [imageSource, setImageSource] = useState(null);
+
+  const handleDeleteEducation = async (edu_id) => {
+    try {
+      await axios.get(`${URL_API}/del_edu/${edu_id}`);
+      fetchEducation();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const handleDeleteCertificate = async (cert_id) => {
+    try {
+      await axios.get(`${URL_API}/del_cert/${cert_id}`);
+      fetchCertificate();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const handleDeleteExperience = async (exp_id) => {
+    try {
+      await axios.get(`${URL_API}/del_exp/${exp_id}`);
+      fetchExperience();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const handleDeleteJournal = async (journal_id) => {
+    try {
+      await axios.get(`${URL_API}/del_sci/${journal_id}`);
+      fetchJournal();
+    } catch (error) {
+      Alert.alert('Error', language === 'EN' ?  'Failed to Delete journal' : 'Gagal menghapus journal')
+      console.log(error);
+    }
+  };
 
   const chooseImage = async () => {
     const permissionResult =
@@ -98,6 +144,7 @@ export default function Profile() {
 
   useEffect(() => {
     const changeStructure = experienceData?.exp_data?.map((experience) => ({
+      id: experience?.id,
       title: experience?.title,
       description: experience?.Description || "Description Jobs",
       ortherText: experience?.location_type,
@@ -112,6 +159,7 @@ export default function Profile() {
   }, [experienceData]);
   useEffect(() => {
     const changeStructure = educationData?.edu_data?.map((education) => ({
+      id: education?.id,
       title: education?.school,
       date: `${moment(education?.grad_date).format("MMMM YYYY")}`,
       subTitle: `${education?.degree} · ${education?.study_field}`,
@@ -122,7 +170,9 @@ export default function Profile() {
   useEffect(() => {
     fetchUserProfile();
   }, [token]);
+
   useEffect(() => {
+    fetchJournal();
     fetchCertificate();
   }, [userProfile]);
   return (
@@ -229,7 +279,9 @@ export default function Profile() {
             >
               {language === "EN" ? "Personal Information" : "Informasi Pribadi"}
             </Text>
-            <TouchableOpacity onPress={() => setShowModal(true)}>
+            <TouchableOpacity
+              onPress={() => navigation.navigate("add-personal")}
+            >
               <FontAwesome5 name="pencil-alt" size={15} color="black" />
             </TouchableOpacity>
           </View>
@@ -277,6 +329,7 @@ export default function Profile() {
               flexDirection: "row",
               justifyContent: "space-between",
               alignItems: "center",
+              marginBottom: 15,
             }}
           >
             <Text
@@ -284,11 +337,26 @@ export default function Profile() {
             >
               {language === "EN" ? "Experience" : "Pengalaman"}
             </Text>
-            <TouchableOpacity onPress={() => setShowModal(true)}>
-              <FontAwesome5 name="pencil-alt" size={15} color="black" />
+            <TouchableOpacity
+              onPress={() => navigation.navigate("add-experience")}
+            >
+              <FontAwesome name="plus" size={20} color="black" />
             </TouchableOpacity>
           </View>
-          <Timeline data={experienceTimeline} />
+          {experienceTimeline?.map((data) => (
+            <Timeline
+              key={data?.id}
+              title={data?.title}
+              subTitle={data?.subTitle}
+              date={data?.date}
+              description={data?.description}
+              ortherText={data?.ortherText}
+              onDelete={() => handleDeleteExperience(data?.id)}
+              onPressIcon={() =>
+                navigation.push("add-experience", { experience_id: data?.id })
+              }
+            />
+          ))}
         </View>
         <View style={{ backgroundColor: "white", padding: 5, marginTop: 20 }}>
           <View
@@ -304,14 +372,31 @@ export default function Profile() {
               {language === "EN" ? "Certificate" : "Sertifikat"}
             </Text>
 
-            <TouchableOpacity onPress={() => setShowModal(true)}>
-              <FontAwesome5 name="pencil-alt" size={15} color="black" />
+            <TouchableOpacity
+              onPress={() => navigation.push("add-certificate")}
+            >
+              <FontAwesome name="plus" size={20} color="black" />
             </TouchableOpacity>
           </View>
           {certificate?.map((certif) => (
             <View key={certif?.id} style={styles.WrapperCertificate}>
               <View style={styles.header}>
                 <Text style={styles.title}>{certif?.cert_title}</Text>
+
+                <View
+                  style={{
+                    flexDirection: "row",
+                    gap: 15,
+                    alignItems: "center",
+                  }}
+                >
+                  <TouchableOpacity onPress={() => navigation.push('add-certificate', {certificate: certif})}>
+                    <FontAwesome5 name="pencil-alt" size={15} color="black" />
+                  </TouchableOpacity>
+                  <TouchableOpacity onPress={() => handleDeleteCertificate(certif?.id)}>
+                    <FontAwesome name="trash" size={20} color={COLORS.red} />
+                  </TouchableOpacity>
+                </View>
               </View>
               <View style={styles.details}>
                 <Text style={styles.organization}>{certif?.organization}</Text>
@@ -342,6 +427,7 @@ export default function Profile() {
               flexDirection: "row",
               justifyContent: "space-between",
               alignItems: "center",
+              marginBottom: 15,
             }}
           >
             <Text
@@ -349,11 +435,26 @@ export default function Profile() {
             >
               {language === "EN" ? "Education" : "Pendidikan"}
             </Text>
-            <TouchableOpacity onPress={() => setShowModal(true)}>
-              <FontAwesome5 name="pencil-alt" size={15} color="black" />
+            <TouchableOpacity
+              onPress={() => navigation.navigate("add-education")}
+            >
+              <FontAwesome name="plus" size={20} color="black" />
             </TouchableOpacity>
           </View>
-          <Timeline data={educationTimeline} />
+          {educationTimeline?.map((data) => (
+            <Timeline
+              key={data?.id}
+              title={data?.title}
+              subTitle={data?.subTitle}
+              date={data?.date}
+              description={data?.description}
+              ortherText={data?.ortherText}
+              onDelete={() => handleDeleteEducation(data?.id)}
+              onPressIcon={() =>
+                navigation.navigate("add-education", { education_id: data?.id })
+              }
+            />
+          ))}
         </View>
         <View style={{ backgroundColor: "white", padding: 5, marginTop: 20 }}>
           <View
@@ -361,17 +462,19 @@ export default function Profile() {
               flexDirection: "row",
               justifyContent: "space-between",
               alignItems: "center",
+              marginBottom: 15
             }}
           >
             <Text
-              style={{ fontSize: 20, fontWeight: "bold", marginBottom: 15 }}
+              style={{ fontSize: 20, fontWeight: "bold", }}
             >
               {language === "EN" ? "Medical Journal" : "Jurnal Medis"}
             </Text>
-            <TouchableOpacity onPress={() => setShowModal("journal")}>
-              <FontAwesome5 name="pencil-alt" size={15} color="black" />
+            <TouchableOpacity onPress={() => navigation.push('add-journal')}>
+              <FontAwesome name="plus" size={20} color="black" />
             </TouchableOpacity>
           </View>
+          {journal?.map((journal) => (
           <View
             style={{
               marginBottom: 12,
@@ -380,11 +483,25 @@ export default function Profile() {
             }}
           >
             <View
-              style={{ flexDirection: "row", justifyContent: "space-between" }}
+              style={{ flexDirection: "row", justifyContent: "space-between", alignItems: 'center' }}
             >
               <Text style={{ fontWeight: "bold", fontSize: 16 }}>
-                Journal Title
+                {journal?.title}
               </Text>
+              <View
+                  style={{
+                    flexDirection: "row",
+                    gap: 15,
+                    alignItems: "center",
+                  }}
+                >
+                  <TouchableOpacity onPress={() => navigation.push('add-certificate', {certificate: certif})}>
+                    <FontAwesome5 name="pencil-alt" size={15} color="black" />
+                  </TouchableOpacity>
+                  <TouchableOpacity onPress={() => handleDeleteJournal(journal?.id)}>
+                    <FontAwesome name="trash" size={20} color={COLORS.red} />
+                  </TouchableOpacity>
+                </View>
             </View>
             <View style={{ marginTop: 8 }}>
               <Text
@@ -397,16 +514,17 @@ export default function Profile() {
               >
                 {language === "EN" ? "Link to Journal" : "Link ke jurnal"}
                 <TouchableOpacity
-                  onPress={() => Linking.openURL("https://google.com")}
+                  onPress={() => Linking.openURL(journal?.link || "https://google.com")}
                 >
                   <EvilIcons name="external-link" size={24} color="black" />
                 </TouchableOpacity>
               </Text>
               <Text style={{ fontSize: 14, marginTop: 6 }}>
-                this is description to jurnal
+                {journal?.desc}
               </Text>
             </View>
           </View>
+          ))}
         </View>
         <View style={{ backgroundColor: "white", padding: 5, marginTop: 20 }}>
           <Text style={{ fontSize: 20, fontWeight: "bold", marginBottom: 15 }}>
@@ -439,11 +557,25 @@ export default function Profile() {
           </View>
         </View>
         <TouchableOpacity onPress={() => handleLogout()}>
-          <Text style={[styles.buttonLogout, {backgroundColor: 'transparent', color: 'red', borderColor: 'red', borderWidth: 2}]}>
+          <Text
+            style={[
+              styles.buttonLogout,
+              {
+                backgroundColor: "transparent",
+                color: "red",
+                borderColor: "red",
+                borderWidth: 2,
+              },
+            ]}
+          >
             {language === "EN" ? "Logout" : "Keluar"}
           </Text>
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => Linking.openURL('https://learning.aedu.id/remove-account')}>
+        <TouchableOpacity
+          onPress={() =>
+            Linking.openURL("https://learning.aedu.id/remove-account")
+          }
+        >
           <Text style={styles.buttonLogout}>
             {language === "EN" ? "Delete Account" : "Hapus Akun"}
           </Text>
@@ -455,7 +587,10 @@ export default function Profile() {
         />
         <ModalJournal
           isVisible={showModal === "journal"}
-          onClose={() => setShowModal(false)}
+          onClose={() => {
+            setShowModal(false);
+            fetchJournal();
+          }}
         />
         <ModalAbout
           isVisible={showModalAbout}
@@ -510,6 +645,7 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
+    alignItems:'center'
   },
   title: {
     fontWeight: "bold",
@@ -529,6 +665,18 @@ const styles = StyleSheet.create({
   },
   credentialText: {
     fontSize: 14,
+  },
+  label: {
+    fontSize: 14,
+    marginBottom: 5,
+  },
+  input: {
+    height: 40,
+    borderWidth: 1,
+    borderColor: "rgba(0,0,0,.4)",
+    marginBottom: 20,
+    paddingHorizontal: 10,
+    borderRadius: 4,
   },
 });
 
@@ -719,108 +867,7 @@ export function ModalInformation({ isVisible, onClose, profile }) {
   );
 }
 export function ModalJournal({ isVisible, onClose }) {
-  const {
-    control,
-    handleSubmit,
-    formState: { errors },
-    setValue,
-    watch,
-  } = useForm({
-    defaultValues: {
-      title: "",
-      link: "",
-      desc: "",
-    },
-  });
-
-  const { language } = useLanguageContext();
-  const onSubmitForm = async (data) => {
-      try {
-
-        const fd = new FormData();
-        fd.append('title', data?.title);
-        fd.append('desc', watch('description'));
-        fd.append('link', data?.url);
-        const response = await axios.post(`${URL_API}/add_sciworks`, fd);
-        if (response.status === 200) {
-          onClose();
-        }
-      } catch (error) {
-        Alert.alert(language === 'EN' ? 'Failed to save journal' : 'Gagal menyimpan jurnal')
-        console.log(error);
-      }
-    }
-  return (
-    <Modal animationType="slide" visible={isVisible} onBackdropPress={onClose}>
-      <View style={stylesModal.container}>
-        <Text style={stylesModal.title}>
-          {language === "EN" ? "Medical Journal" : "Jurnal Medis"}
-        </Text>
-
-        <Controller
-          control={control}
-          render={({ field }) => (
-            <TextInput
-              placeholder={language === "EN" ? "Title" : "Judul"}
-              onChangeText={(text) => field.onChange(text)}
-              value={field.value}
-              style={stylesModal.input}
-            />
-          )}
-          name="title"
-          rules={{ required: true }}
-        />
-
-        <Controller
-          control={control}
-          render={({ field }) => (
-            <TextInput
-              placeholder={language === "EN" ? "Description" : "Deskripsi"}
-              onChangeText={(text) => field.onChange(text)}
-              value={field.value}
-              style={stylesModal.input}
-              multiline
-              numberOfLines={8}
-              textAlignVertical="top"
-            />
-          )}
-          name="desc"
-          rules={{ required: true }}
-        />
-
-        <Controller
-          control={control}
-          render={({ field }) => (
-            <TextInput
-              placeholder={
-                language === "EN" ? "URL Journal Medical" : "URL Jurnal Medis"
-              }
-              onChangeText={(text) => field.onChange(text)}
-              value={field.value}
-              style={stylesModal.input}
-            />
-          )}
-          name="link"
-          rules={{ required: true }}
-        />
-
-        <TouchableOpacity
-          onPress={handleSubmit(onSubmitForm)}
-          style={stylesModal.button}
-        >
-          <Text style={{ color: "white", textAlign: "center" }}>
-            {language === "EN" ? "Save" : "Simpan"}
-          </Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity onPress={onClose} style={stylesModal.button}>
-          <Text style={{ color: "white", textAlign: "center" }}>
-            {language === "EN" ? "Close" : "Tutup"}
-          </Text>
-        </TouchableOpacity>
-      </View>
-    </Modal>
-  );
+  
 }
 export function ModalAbout({ isVisible, onClose, profile }) {
   const {

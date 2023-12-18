@@ -63,7 +63,7 @@ export default function ModalReport ({ showModal, setShowModal}) {
               {language === 'EN' ? "Report Learning" : "Laporkan Pembelajaran"}
             </Text>
             <Text style={styles.description}>
-              {language === 'EN' ? "Flagging a learning will notify aedu team who will take appropriate action." : "Laporkan kursus ini akan memberi tau tim Aedu yang akan mengambil tindakan yang sesuai."}
+              {language === 'EN' ? "Flagging a learning will notify aedu team who will take appropriate action." : "Laporkan kursus ini akan memberi tau tim aedu  yang akan mengambil tindakan yang sesuai."}
             </Text>
             {reportReason.map((reason, i) => (
               <TouchableOpacity

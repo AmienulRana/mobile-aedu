@@ -39,6 +39,11 @@ import ListParticipantEnterprise from "../../pages/enterprise/list-parcipant";
 import MyTicket from "../../pages/my-ticket";
 import ReportPost from "../../pages/community/report-post";
 import Discover from "../../pages/discover";
+import PersonalInformation from "../../pages/profile/personal";
+import ActionEducation from "../../pages/profile/education";
+import ActionExperience from "../../pages/profile/experience";
+import ActionCertificate from "../../pages/profile/certificate";
+import ActionJournal from "../../pages/profile/journal";
 
 const Stack = createNativeStackNavigator();
 
@@ -53,6 +58,11 @@ export default function StackNavigation() {
         <Stack.Screen name="course-detail" component={CourseDetail} />
         <Stack.Screen name="my-ticket" component={MyTicket} />
         <Stack.Screen name="profile" component={Profile} />
+        <Stack.Screen name="add-personal" component={PersonalInformation} />
+        <Stack.Screen name="add-education" component={ActionEducation} />
+        <Stack.Screen name="add-experience" component={ActionExperience} />
+        <Stack.Screen name="add-certificate" component={ActionCertificate} />
+        <Stack.Screen name="add-journal" component={ActionJournal} />
         <Stack.Screen name="my-course" component={MyCourse} />
         <Stack.Screen name="cart" component={MyCart} />
         <Stack.Screen name="cart-detail" component={CartDetail} />

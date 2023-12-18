@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   Alert,
   ScrollView,
+  Linking,
 } from "react-native";
 import React, { useState } from "react";
 import COLORS from "../components/shared/COLORS";
@@ -37,7 +38,7 @@ export default function Login() {
       });
       if (response.status === 200) {
         await AsyncStorage.setItem("login-mode", "user");
-        navigation.push("home");
+        navigation.push("discover");
       }
     } catch (error) {
       console.log("error", error);
@@ -80,6 +81,19 @@ export default function Login() {
         <Text style={styles.heading}>
           {language === "EN" ? "Welcome to AEDU" : "Selamat Datang di AEDU"}
         </Text>
+
+
+        <View style={{flexDirection:'row', gap:10, marginTop:15}}>
+        <Text style={{ fontSize: 16, color: COLORS.gray }}>
+          {language === "EN" ? "Don't have account?" : "Tidak mempunyai Akun?"}
+        </Text>
+        <TouchableOpacity onPress={() => Linking.openURL('https://app.aedu.id/sign-up')}>
+        <Text style={{fontSize: 16, color: COLORS.main}}>
+          {language === "EN" ? "Register" : "Daftar"}
+        </Text>
+        </TouchableOpacity>
+
+        </View>
 
         <View style={styles.wrapperInput}>
           <FontAwesome5
@@ -126,7 +140,7 @@ export default function Login() {
           </Text>
         </TouchableOpacity>
 
-        <TouchableOpacity onPress={() => navigation.navigate("home")}>
+        <TouchableOpacity onPress={() => navigation.push("discover")}>
           <Text
             style={{ textAlign: "center", color: COLORS.gray, marginTop: 15 }}
           >

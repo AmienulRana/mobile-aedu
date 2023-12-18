@@ -32,47 +32,57 @@ export default function CommunityPost() {
   return (
     <>
       <StatusBar style={{ backgroundColor: "white" }} />
-      <ScrollView showsVerticalScrollIndicator={false} style={styles.container}>
-        <PageHeaderCommunity />
-
-        <TouchableOpacity
-          onPress={() => setShowModal(true)}
-          activeOpacity={0.9}
+      <ScrollView showsVerticalScrollIndicator={false}>
+        <View style={styles.container}>
+          <PageHeaderCommunity />
+        </View>
+        <View
+          style={{
+            backgroundColor: "#f4f2ee91",
+            paddingHorizontal: 10,
+            paddingTop: 10,
+          }}
         >
-          <View style={styles.profileContainer}>
-            <Avatar name={data?.[0]?.ms_User?.ms_Profile?.first_name} />
-            <TextInput
-              placeholder={
-                language === "EN"
-                  ? "What's do you want to talk about??"
-                  : "Apa yang ingin kamu bicarakan??"
-              }
-              style={styles.input}
-              onPress={() => setShowModal(true)}
-            />
-          </View>
-          <View style={styles.buttonContainer}>
-            <View style={styles.imageTextContainer}>
-              <FontAwesome name="image" size={18} color="#06b6d4" />
-              <Text style={styles.imageText}>
-                {language === "EN" ? "Add Image" : "Tambahkan Gambar"}
-              </Text>
+          <TouchableOpacity
+            onPress={() => setShowModal(true)}
+            activeOpacity={0.9}
+            style={{ padding: 15, borderRadius: 5, backgroundColor: "white" }}
+          >
+            <View style={styles.profileContainer}>
+              <Avatar name={data?.[0]?.ms_User?.ms_Profile?.first_name} />
+              <TextInput
+                placeholder={
+                  language === "EN"
+                    ? "What's do you want to talk about??"
+                    : "Apa yang ingin kamu bicarakan??"
+                }
+                style={styles.input}
+                onPress={() => setShowModal(true)}
+              />
             </View>
-            <TouchableOpacity
-              onPress={() => setShowModal(true)}
-              style={styles.postButton}
-            >
-              <Text style={styles.buttonText}>
-                {language === "EN" ? "Post" : "Kirim"}
-              </Text>
-            </TouchableOpacity>
-          </View>
-        </TouchableOpacity>
+            <View style={styles.buttonContainer}>
+              <View style={styles.imageTextContainer}>
+                <FontAwesome name="image" size={18} color="#06b6d4" />
+                <Text style={styles.imageText}>
+                  {language === "EN" ? "Add Image" : "Tambahkan Gambar"}
+                </Text>
+              </View>
+              <TouchableOpacity
+                onPress={() => setShowModal(true)}
+                style={styles.postButton}
+              >
+                <Text style={styles.buttonText}>
+                  {language === "EN" ? "Post" : "Kirim"}
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </TouchableOpacity>
 
-        <View style={{ marginTop: 30 }}></View>
-        {data?.map((post) => (
-          <PostCard key={post?.id} post={post} />
-        ))}
+          <View style={{ marginTop: 10 }}></View>
+          {data?.map((post) => (
+            <PostCard key={post?.id} post={post} />
+          ))}
+        </View>
       </ScrollView>
       {/* {showModal && ( */}
       <ModalCreatePost
@@ -89,6 +99,7 @@ export default function CommunityPost() {
 const styles = StyleSheet.create({
   container: {
     paddingHorizontal: 25,
+    paddingBottom: 20,
     position: "relative",
   },
   profileContainer: {
@@ -96,7 +107,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: 15,
     gap: 10,
-    marginTop: 40,
+    // marginTop: 40,
   },
   profileImage: {
     // Add your image style here
@@ -125,7 +136,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 30,
+    // marginBottom: 30,
   },
   imageTextContainer: {
     flexDirection: "row",
